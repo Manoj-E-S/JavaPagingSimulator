@@ -3,6 +3,7 @@ package io.github.manoj_e_s.java_page_simulator.backend_components;
 import java.util.HashMap;
 import io.github.manoj_e_s.java_page_simulator.backend_components.caching_policy.CachingPolicy;
 
+// Singleton Cache
 public class Cache {
 
     // Cache Size
@@ -15,11 +16,36 @@ public class Cache {
     private final HashMap<String, Page> frames;
 
 
-    // GlobalConfig Param Constructor
-    public Cache(GlobalConfig gc) {
+    // INSTANCE
+    private static Cache instance = null;
+
+
+    // GlobalConfig PARAM CONSTRUCTOR
+    private Cache(GlobalConfig gc) {
         this.numOfFrames = gc.getFramesInCache();
         this.cachingPolicy = gc.getCachingPolicy();
         this.frames = new HashMap<String, Page>();
+    }
+
+
+    // INSTANCE GETTER
+    public static synchronized Cache getInstance(GlobalConfig gc) {
+        if (instance == null)
+            instance = new Cache(gc);
+
+        return instance;
+    }
+
+
+    // METHODS
+
+    @Override
+    public String toString() {
+        return "Cache {\n" +
+                "\tnumOfFrames = " + numOfFrames + ",\n" +
+                "\tcachingPolicy = " + cachingPolicy + ",\n" +
+                "\tframes = " + frames + ",\n" +
+                '}';
     }
 
     // Put data
@@ -32,6 +58,7 @@ public class Cache {
         this.frames.put(page.getPageName(), page);
         return this.frames;
     }
+
 
     // Get page
     public Page get(String pageName) {
