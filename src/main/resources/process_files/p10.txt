@@ -1,0 +1,7 @@
+# Stack-like Access Pattern (LIFO) (Best suited for Move-to-Front)
+# Pages are accessed in a stack-like manner
+pageA 2
+pageB 1
+pageC 2
+pageB 1
+pageA 2

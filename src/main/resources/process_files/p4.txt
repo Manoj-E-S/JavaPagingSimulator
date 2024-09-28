@@ -1,0 +1,10 @@
+# Locality of Reference Pattern (Spatial Locality) (Best suited for LRU or ARC)
+# A group of pages is accessed together, followed by another group
+pageA 1
+pageB 2
+pageC 1
+pageA 1
+pageB 2
+pageC 1
+pageD 3
+pageE 2

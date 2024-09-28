@@ -1,0 +1,8 @@
+# Loop Access Pattern (Best suited for LRU)
+# A set of pages is accessed in a repeated loop
+pageA 2
+pageB 1
+pageC 1
+pageA 2
+pageB 1
+pageC 1

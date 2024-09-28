@@ -1,0 +1,8 @@
+# Periodic Access Pattern (Best suited for LRU or 2Q)
+# Pages are accessed periodically at fixed intervals
+pageA 1
+pageB 2
+pageC 3
+pageA 1
+pageB 2
+pageC 3

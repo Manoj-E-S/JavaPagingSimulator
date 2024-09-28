@@ -1,0 +1,10 @@
+# Hybrid Access Pattern (Best suited for ARC)
+# A mix of various access patterns
+pageA 2
+pageB 1
+pageA 2
+pageZ 3
+pageC 2
+pageD 1
+pageB 1
+pageX 3

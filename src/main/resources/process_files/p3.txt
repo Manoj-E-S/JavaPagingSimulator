@@ -1,0 +1,7 @@
+# Random Access Pattern (Best suited for ARC or 2Q)
+# Pages are accessed randomly without any clear order
+pageX 3
+pageB 2
+pageF 4
+pageZ 1
+pageC 3

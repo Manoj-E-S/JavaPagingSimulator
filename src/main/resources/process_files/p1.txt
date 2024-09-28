@@ -1,0 +1,7 @@
+# Sequential Access Pattern (Best suited for FIFO)
+# Pages are accessed one after the other
+pageA 1
+pageB 2
+pageC 1
+pageD 3
+pageE 2

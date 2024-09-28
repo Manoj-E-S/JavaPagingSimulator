@@ -1,0 +1,7 @@
+# Strided Access Pattern (Best suited for 2Q or ARC)
+# Pages are accessed with a fixed step between them
+pageA 2
+pageC 1
+pageE 3
+pageG 2
+pageI 3

@@ -1,0 +1,8 @@
+# Thrashing Pattern (Best suited for ARC)
+# Many pages are accessed frequently, leading to frequent cache evictions
+pageA 1
+pageB 2
+pageC 3
+pageD 1
+pageE 2
+pageF 3

@@ -1,0 +1,8 @@
+# Repeated Access Pattern (Temporal Locality) (Best suited for LRU)
+# The same pages are accessed repeatedly
+pageA 2
+pageB 1
+pageA 2
+pageC 2
+pageB 1
+pageA 2

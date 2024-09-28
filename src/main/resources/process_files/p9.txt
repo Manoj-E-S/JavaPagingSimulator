@@ -1,0 +1,10 @@
+# Burst Access Pattern (Best suited for 2Q or ARC)
+# Pages are accessed in bursts followed by pauses
+pageA 2
+pageB 1
+- 10
+pageC 2
+pageD 1
+- 5
+pageE 3
+pageF 2

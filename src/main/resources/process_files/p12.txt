@@ -1,0 +1,7 @@
+# Sparse Access Pattern (Best suited for ARC or LRU)
+# Pages are accessed far apart from one another
+pageA 2
+pageZ 1
+pageX 3
+pageB 1
+pageQ 2
