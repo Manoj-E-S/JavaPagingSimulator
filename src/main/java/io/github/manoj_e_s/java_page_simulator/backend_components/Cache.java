@@ -44,13 +44,13 @@ public class Cache {
         return "Cache {\n" +
                 "\tnumOfFrames = " + numOfFrames + ",\n" +
                 "\tcachingPolicy = " + cachingPolicy + ",\n" +
-                "\tframes = " + frames + ",\n" +
+                "\tframes = " + frames + "\n" +
                 '}';
     }
 
-    // Put data
+    // Put page
     public HashMap<String, Page> put(Page page) {
-        if(frames.size() == this.numOfFrames) {
+        if(frames.size() >= this.numOfFrames) {
             // TODO: CachePolicy implementation
             System.out.println("Cache full. CachePolicy Yet to be implemented :(");
             return null;
@@ -62,7 +62,15 @@ public class Cache {
 
     // Get page
     public Page get(String pageName) {
-        return this.frames.get(pageName);
+        Page requiredPage = this.frames.get(pageName);
+        if(requiredPage != null) {
+            return requiredPage;
+        }
+
+        Disk disk = Disk.getInstance();
+        requiredPage = disk.get(pageName);
+        Cache.instance.put(requiredPage);
+        return requiredPage;
     }
 
 }

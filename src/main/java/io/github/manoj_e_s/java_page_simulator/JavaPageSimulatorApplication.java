@@ -10,7 +10,14 @@ public class JavaPageSimulatorApplication {
 
 	public static void main(String[] args) throws IOException {
 		LRUPolicy lruPolicy = new LRUPolicy();
-		GlobalConfig globalConfig = new GlobalConfig(lruPolicy);
+		GlobalConfig globalConfig = new GlobalConfig(
+				false,
+				10,
+				2,
+				lruPolicy,
+				3,
+				1024
+		);
 		System.out.println(globalConfig);
 
 		Process p1 = new Process("/home/manoj/Manoj/Projects/java-page-simulator/src/main/resources/process_files/p1.txt", "p1");

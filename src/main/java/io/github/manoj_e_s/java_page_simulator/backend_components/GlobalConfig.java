@@ -85,11 +85,8 @@ public class GlobalConfig {
         this.pageSizeInKb = pageSizeInKb;
     }
 
-    // CachingPolicy Param Constructor
-    public GlobalConfig(CachingPolicy cachingPolicy) {
-        this.cachingPolicy = cachingPolicy;
-    }
 
+    // METHODS
     @Override
     public String toString() {
         return "GlobalConfig {\n" +

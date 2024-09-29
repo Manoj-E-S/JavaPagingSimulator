@@ -1,8 +1,9 @@
 package io.github.manoj_e_s.java_page_simulator.backend_components;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.stream.Collectors;
 
 public class Process {
 
@@ -17,7 +18,7 @@ public class Process {
     public final String processFilePath;
 
     // Its Pages
-    private List<String> pageLines = new ArrayList<>();
+    private Queue<String> pageLines = new LinkedList<>();
 
 
     // GETTERS AND SETTERS
@@ -42,7 +43,7 @@ public class Process {
         this.pid = Process.pidCounter;
         Process.pidCounter++;
 
-        this.pageLines = this.addPagesToDisk();
+        this.pageLines = this.addAllPages();
     }
 
 
@@ -53,31 +54,32 @@ public class Process {
                 "\tname = '" + name + "',\n" +
                 "\tpid = " + pid + ",\n" +
                 "\tprocessFilePath = '" + processFilePath + "',\n" +
-                "\tpages = " + pageLines + ",\n" +
+                "\tpages = Queue" + pageLines + ",\n" +
                 '}';
     }
 
-    private List<String> addPagesToDisk() throws IOException {
-        List<ProcessFileLine> lines = ProcessFileParser.getProcessFileLineList(this.processFilePath);
+    private Queue<String> addAllPages() throws IOException {
+        Queue<ProcessFileLine> lines = ProcessFileParser.getProcessFileLineList(this.processFilePath);
+
         for(var line: lines) {
-            Page page = new Page(
+            Page.createPage(
                     line.pageName(),
-                    this.pid,
                     line.timeToExecuteInSeconds()
             );
-            Disk disk = Disk.getInstance();
-            disk.put(line.pageName(), page);
         }
 
-        return lines.stream().map(ProcessFileLine::pageName).toList();
+        return lines.stream().map(ProcessFileLine::pageName).collect(Collectors.toCollection(LinkedList<String>::new));
     }
 
     public void startSimulation(GlobalConfig gc) {
         Cache cache = Cache.getInstance(gc);
         System.out.println(cache);
 
-        // TODO: Get required Pages from cache -> forEachPageName(cache.getPage(pageName))
-        // TODO: Run each Page in pageLine-order -> forEachPage(page.run())
+        System.out.println("Running: Process(PID=" + this.pid + ')');
+        for(String pageName: this.pageLines){
+            Page p = cache.get(pageName);
+            p.run();
+        }
     }
 
 }
