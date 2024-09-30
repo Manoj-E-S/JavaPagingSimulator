@@ -3,7 +3,6 @@ package io.github.manoj_e_s.java_page_simulator.backend_components;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.stream.Collectors;
 
 public class Process {
 
@@ -18,7 +17,7 @@ public class Process {
     public final String processFilePath;
 
     // Its Pages
-    private Queue<String> pageLines = new LinkedList<>();
+    private Queue<ProcessFileLine> pageLines = new LinkedList<>();
 
 
     // GETTERS AND SETTERS
@@ -58,27 +57,25 @@ public class Process {
                 '}';
     }
 
-    private Queue<String> addAllPages() throws IOException {
+    private Queue<ProcessFileLine> addAllPages() throws IOException {
         Queue<ProcessFileLine> lines = ProcessFileParser.getProcessFileLineList(this.processFilePath);
 
         for(var line: lines) {
-            Page.createPage(
-                    line.pageName(),
-                    line.timeToExecuteInSeconds()
-            );
+            Page.createPage(line.pageName());
         }
 
-        return lines.stream().map(ProcessFileLine::pageName).collect(Collectors.toCollection(LinkedList<String>::new));
+        return lines;
     }
 
-    public void startSimulation(GlobalConfig gc) {
-        Cache cache = Cache.getInstance(gc);
+    public void startSimulation() {
+        Cache cache = Cache.getInstance();
         System.out.println(cache);
 
         System.out.println("Running: Process(PID=" + this.pid + ')');
-        for(String pageName: this.pageLines){
-            Page p = cache.get(pageName);
-            p.run();
+        while(this.pageLines.peek() != null){
+            ProcessFileLine pageLine = this.pageLines.poll();
+            Page p = cache.get(pageLine.pageName());
+            p.run(pageLine.timeToExecuteInSeconds());
         }
     }
 

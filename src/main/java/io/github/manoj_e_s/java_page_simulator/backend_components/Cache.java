@@ -1,13 +1,11 @@
 package io.github.manoj_e_s.java_page_simulator.backend_components;
 
-import java.util.HashMap;
 import io.github.manoj_e_s.java_page_simulator.backend_components.caching_policy.CachingPolicy;
+
+import java.util.HashMap;
 
 // Singleton Cache
 public class Cache {
-
-    // Cache Size
-    public final int numOfFrames;
 
     // Caching Policy
     public CachingPolicy cachingPolicy;
@@ -15,25 +13,46 @@ public class Cache {
     // Frames K: pageName, V: Page
     private final HashMap<String, Page> frames;
 
+    // Global Config
+    private static GlobalConfig globalConfig;
+
 
     // INSTANCE
     private static Cache instance = null;
 
 
+    // GETTERS AND SETTERS
+    public static GlobalConfig getGlobalConfig() {
+        return globalConfig;
+    }
+
+
     // GlobalConfig PARAM CONSTRUCTOR
     private Cache(GlobalConfig gc) {
-        this.numOfFrames = gc.getFramesInCache();
+        Cache.globalConfig = gc;
         this.cachingPolicy = gc.getCachingPolicy();
         this.frames = new HashMap<String, Page>();
     }
 
 
-    // INSTANCE GETTER
-    public static synchronized Cache getInstance(GlobalConfig gc) {
-        if (instance == null)
-            instance = new Cache(gc);
+    // INSTANCE RELATED METHODS
+    // Instantiate
+    public static void instantiate(GlobalConfig globalConfig) {
+        Cache.instance = new Cache(globalConfig);
+    }
 
+    // Get Instance
+    public static synchronized Cache getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("Cache has not been initialized with GlobalConfig yet.\nUse Cache.instantiate(globalConfig)");
+        }
         return instance;
+    }
+
+    // Clear the Cache
+    public static synchronized void clear() {
+        instance = null;
+        globalConfig = null;
     }
 
 
@@ -42,35 +61,43 @@ public class Cache {
     @Override
     public String toString() {
         return "Cache {\n" +
-                "\tnumOfFrames = " + numOfFrames + ",\n" +
+                "\tnumOfFrames = " + globalConfig.getFramesInCache() + ",\n" +
                 "\tcachingPolicy = " + cachingPolicy + ",\n" +
                 "\tframes = " + frames + "\n" +
                 '}';
     }
 
-    // Put page
-    public HashMap<String, Page> put(Page page) {
-        if(frames.size() >= this.numOfFrames) {
-            // TODO: CachePolicy implementation
-            System.out.println("Cache full. CachePolicy Yet to be implemented :(");
-            return null;
-        }
-        this.frames.put(page.getPageName(), page);
-        return this.frames;
+    // Is Cache Full?
+    public boolean isFull() {
+        return this.frames.size() >= globalConfig.getFramesInCache();
     }
 
+    // Put page
+    public void put(Page page) {
+        if(page == null) {
+            throw new IllegalStateException("Page cannot be NULL while putting into the Cache");
+        }
+        this.frames.put(page.getPageName(), page);
+    }
 
     // Get page
     public Page get(String pageName) {
         Page requiredPage = this.frames.get(pageName);
         if(requiredPage != null) {
+            // Cache Hit
+            cachingPolicy.handleHit(requiredPage);
             return requiredPage;
         }
 
-        Disk disk = Disk.getInstance();
-        requiredPage = disk.get(pageName);
-        Cache.instance.put(requiredPage);
+        // Cache Miss
+        // Add required page to cache by Policy and get it
+        requiredPage = cachingPolicy.handleMiss(pageName);
         return requiredPage;
+    }
+
+    // Evict page
+    public void evict(String pageName) {
+        this.frames.remove(pageName);
     }
 
 }

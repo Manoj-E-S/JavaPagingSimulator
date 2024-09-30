@@ -13,8 +13,8 @@ public class Disk extends HashMap<String, Page> {
 
     // METHODS
     public static synchronized Disk getInstance() {
-        if (instance == null)
-            instance = new Disk();
+        if (Disk.instance == null)
+            Disk.instance = new Disk();
 
         return instance;
     }

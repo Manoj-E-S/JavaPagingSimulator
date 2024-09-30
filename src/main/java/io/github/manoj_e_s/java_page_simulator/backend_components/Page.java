@@ -11,9 +11,6 @@ public class Page {
     private static int pageNumberCounter = 0;
     public final int pageNumber;
 
-    // time to execute
-    public final int timeToExecuteInSeconds;
-
 
     // Getters and Setters
     public String getPageName() {
@@ -24,32 +21,26 @@ public class Page {
         return pageNumber;
     }
 
-    public int getTimeToExecuteInSeconds() {
-        return timeToExecuteInSeconds;
-    }
-
 
     // All Params Constructor
-    private Page(String pageName, int timeToExecuteInSeconds) {
+    private Page(String pageName) {
         this.pageName = pageName;
-        this.timeToExecuteInSeconds = timeToExecuteInSeconds;
 
         this.pageNumber = Page.pageNumberCounter;
         Page.pageNumberCounter++;
     }
 
     // Page Factory
-    public static Page createPage(String pageName, int timeToExecuteInSeconds) {
+    public static synchronized void createPage(String pageName) {
         Disk disk = Disk.getInstance();
         for(Page page: disk.values()) {
             if(page.getPageName().equals(pageName)) {
-                return page;
+                return;
             }
         }
 
-        Page newPage = new Page(pageName, timeToExecuteInSeconds);
+        Page newPage = new Page(pageName);
         disk.put(pageName, newPage);
-        return newPage;
     }
 
 
@@ -59,8 +50,7 @@ public class Page {
     public String toString() {
         return "Page {\n" +
                 "\tpageName = '" + pageName + "',\n" +
-                "\tpageNumber = " + pageNumber + ",\n" +
-                "\ttimeToExecuteInSeconds = " + timeToExecuteInSeconds + "\n" +
+                "\tpageNumber = " + pageNumber + "\n" +
                 '}';
     }
 
@@ -78,12 +68,8 @@ public class Page {
     }
 
     // run
-    public void run() {
-        try {
-            System.out.println("Executing: Page(" + this.pageName + ')');
-            Thread.sleep(this.timeToExecuteInSeconds * 1000L);
-        } catch (InterruptedException ie) {
-            Thread.currentThread().interrupt();
-        }
+    public void run(int timeToExecuteInSeconds) {
+        System.out.println("Executing: Page(" + this.pageName + ')');
+        DelayHandler.delayBySeconds(timeToExecuteInSeconds, "Execution (" + timeToExecuteInSeconds + "s)\n");
     }
 }

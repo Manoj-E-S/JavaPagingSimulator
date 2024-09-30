@@ -90,11 +90,11 @@ public class GlobalConfig {
     @Override
     public String toString() {
         return "GlobalConfig {\n" +
-                "\tpageSizeInKb = " + pageSizeInKb + ",\n" +
+                "\tpageSize = " + pageSizeInKb + "kB,\n" +
                 "\tframesInCache = " + framesInCache + ",\n" +
                 "\tcachingPolicy = " + cachingPolicy + ",\n" +
-                "\tcacheHitTimeInterval = " + cacheHitTimeIntervalInSeconds + ",\n" +
-                "\tcacheMissTimeInterval = " + cacheMissTimeIntervalInSeconds + ",\n" +
+                "\tcacheHitTimeInterval = " + cacheHitTimeIntervalInSeconds + "s,\n" +
+                "\tcacheMissTimeInterval = " + cacheMissTimeIntervalInSeconds + "s,\n" +
                 "\tmeasurePerformance = " + measurePerformance + "\n" +
                 '}';
     }

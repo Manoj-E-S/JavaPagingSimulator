@@ -3,32 +3,33 @@ package io.github.manoj_e_s.java_page_simulator.backend_components.caching_polic
 import io.github.manoj_e_s.java_page_simulator.backend_components.Cache;
 import io.github.manoj_e_s.java_page_simulator.backend_components.Page;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.ArrayList;
+import java.util.List;
 
-public class FIFOPolicy extends CachingPolicy {
-    private final Queue<Page> fifoQ = new LinkedList<>();
+public class MRUPolicy extends CachingPolicy {
+    private final List<Page> mruList = new ArrayList<>();
 
     @Override
     public void policyActionsPostPageAccessOnMiss(Page page) {
-        this.fifoQ.add(page);
-        System.out.println(this.fifoQ);
+        this.mruList.add(page);
+        System.out.println(this.mruList);
     }
 
-    // FIFO does not have any Post-Page-Access-Action after a page-hit
     @Override
     public void policyActionsPostPageAccessOnHit(Page page) {
-        // Do Nothing
+        this.mruList.remove(page);
+        this.mruList.add(page);
+        System.out.println(this.mruList);
     }
 
     @Override
     public void evictPage() {
-        Page evictablePage = this.fifoQ.poll();
+        Page evictablePage = this.mruList.getLast();
         if(evictablePage == null) {
             // Should Never Occur if the app logic is correct
-            throw new IllegalStateException("FIFO Queue cannot be Empty, when trying to evict a page.");
+            throw new IllegalStateException("MRU List cannot be Empty, when trying to evict a page.");
         }
-
+        this.mruList.remove(evictablePage);
         Cache.getInstance().evict(evictablePage.getPageName());
     }
 }
