@@ -5,15 +5,15 @@ import io.github.manoj_e_s.java_page_simulator.backend_components.Page;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Map.Entry;
 
 public class LeastFrequentlyUsedPolicy extends CachingPolicy {
-    private final List<AbstractMap.SimpleEntry<Page, Integer>> lfuList = new ArrayList<AbstractMap.SimpleEntry<Page, Integer>>();
+    private final List<AbstractMap.SimpleEntry<Page, Integer>> lfuList = new ArrayList<>();
 
     @Override
     public void policyActionsPostPageAccessOnMiss(Page page) {
-        this.lfuList.add(new AbstractMap.SimpleEntry<Page, Integer>(page, 1));
+        this.lfuList.add(new AbstractMap.SimpleEntry<>(page, 1));
         System.out.println("MFU-List after Page Access:\n" + this.lfuList);
     }
 
@@ -30,7 +30,7 @@ public class LeastFrequentlyUsedPolicy extends CachingPolicy {
 
     @Override
     public void evictPage() {
-        lfuList.sort(Comparator.comparing(AbstractMap.SimpleEntry::getValue));
+        lfuList.sort(Entry.comparingByValue());
         System.out.println("Sorted MFU-List before Page Eviction:\n" + this.lfuList);
 
         // Last Element will be the Most Recently Used and it will be removed

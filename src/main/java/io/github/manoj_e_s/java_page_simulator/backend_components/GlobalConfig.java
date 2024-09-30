@@ -19,7 +19,7 @@ public class GlobalConfig {
     public int cacheMissTimeIntervalInSeconds;
 
     // Should Performance be measured?
-    public boolean measurePerformance = false;
+    public boolean measurePerformance;
 
 
     // Getters and Setters

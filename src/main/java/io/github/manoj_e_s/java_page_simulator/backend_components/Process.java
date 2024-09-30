@@ -1,7 +1,6 @@
 package io.github.manoj_e_s.java_page_simulator.backend_components;
 
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.Queue;
 
 public class Process {
@@ -17,7 +16,7 @@ public class Process {
     public final String processFilePath;
 
     // Its Pages
-    private Queue<ProcessFileLine> pageLines = new LinkedList<>();
+    private final Queue<ProcessFileLine> pageLines;
 
 
     // GETTERS AND SETTERS

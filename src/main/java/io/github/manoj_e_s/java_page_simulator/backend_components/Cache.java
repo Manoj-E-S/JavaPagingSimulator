@@ -31,7 +31,7 @@ public class Cache {
     private Cache(GlobalConfig gc) {
         Cache.globalConfig = gc;
         this.cachingPolicy = gc.getCachingPolicy();
-        this.frames = new HashMap<String, Page>();
+        this.frames = new HashMap<>();
     }
 
 

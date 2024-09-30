@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MostFrequentlyUsedPolicy extends CachingPolicy {
-    private final List<AbstractMap.SimpleEntry<Page, Integer>> mfuList = new ArrayList<AbstractMap.SimpleEntry<Page, Integer>>();
+    private final List<AbstractMap.SimpleEntry<Page, Integer>> mfuList = new ArrayList<>();
 
     @Override
     public void policyActionsPostPageAccessOnMiss(Page page) {
-        this.mfuList.add(new AbstractMap.SimpleEntry<Page, Integer>(page, 1));
+        this.mfuList.add(new AbstractMap.SimpleEntry<>(page, 1));
         System.out.println("MFU-List after Page Access:\n" + this.mfuList);
     }
 
