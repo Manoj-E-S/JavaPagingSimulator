@@ -1,4 +1,6 @@
-package io.github.manoj_e_s.java_page_simulator.backend_components;
+package io.github.manoj_e_s.java_page_simulator.backend_components.process;
+
+import io.github.manoj_e_s.java_page_simulator.backend_components.performance.DelayHandler;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -14,6 +16,10 @@ public class ProcessFileParser {
             String readLine;
             while ( (readLine = reader.readLine()) != null ) {
                 if( readLine.strip().charAt(0) == '#' ) continue;
+                if( readLine.strip().charAt(0) == '-' ) {
+                    DelayHandler.delayBySeconds(Integer.parseInt(readLine.split(" ")[1]), "Delay in Page arrival");
+                    continue;
+                }
 
                 ProcessFileLine line = new ProcessFileLine(
                         readLine.split(" ")[0],

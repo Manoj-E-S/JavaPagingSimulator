@@ -1,4 +1,4 @@
-package io.github.manoj_e_s.java_page_simulator.backend_components;
+package io.github.manoj_e_s.java_page_simulator.backend_components.cache;
 
 public class CacheConfig {
 
@@ -81,7 +81,7 @@ public class CacheConfig {
     // METHODS
     @Override
     public String toString() {
-        return "GlobalConfig {\n" +
+        return "CacheConfig {\n" +
                 "\tpageSize = " + pageSizeInKb + "kB,\n" +
                 "\tframesInCache = " + framesInCache + ",\n" +
                 "\tcacheHitTimeInterval = " + cacheHitTimeIntervalInSeconds + "s,\n" +

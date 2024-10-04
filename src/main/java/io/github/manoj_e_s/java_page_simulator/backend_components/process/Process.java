@@ -1,4 +1,7 @@
-package io.github.manoj_e_s.java_page_simulator.backend_components;
+package io.github.manoj_e_s.java_page_simulator.backend_components.process;
+
+import io.github.manoj_e_s.java_page_simulator.backend_components.page.Page;
+import io.github.manoj_e_s.java_page_simulator.backend_components.cache.Cache;
 
 import java.io.IOException;
 import java.util.Queue;

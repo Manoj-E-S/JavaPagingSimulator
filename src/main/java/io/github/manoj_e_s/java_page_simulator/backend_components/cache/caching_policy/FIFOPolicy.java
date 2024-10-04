@@ -1,7 +1,7 @@
-package io.github.manoj_e_s.java_page_simulator.backend_components.caching_policy;
+package io.github.manoj_e_s.java_page_simulator.backend_components.cache.caching_policy;
 
-import io.github.manoj_e_s.java_page_simulator.backend_components.Cache;
-import io.github.manoj_e_s.java_page_simulator.backend_components.Page;
+import io.github.manoj_e_s.java_page_simulator.backend_components.cache.Cache;
+import io.github.manoj_e_s.java_page_simulator.backend_components.page.Page;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -12,7 +12,7 @@ public class FIFOPolicy extends CachingPolicy {
     @Override
     public void policyActionsPostPageAccessOnMiss(Page page) {
         this.fifoQ.add(page);
-        System.out.println(this.fifoQ);
+        this.showManagementStructures();
     }
 
     // FIFO does not have any Post-Page-Access-Action after a page-hit
@@ -30,5 +30,10 @@ public class FIFOPolicy extends CachingPolicy {
         }
 
         Cache.getInstance().evict(evictablePage.getPageName());
+    }
+
+    @Override
+    protected void showManagementStructures() {
+        System.out.println(this.fifoQ);
     }
 }

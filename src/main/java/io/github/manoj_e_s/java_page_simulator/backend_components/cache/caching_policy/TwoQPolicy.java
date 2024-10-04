@@ -1,7 +1,7 @@
-package io.github.manoj_e_s.java_page_simulator.backend_components.caching_policy;
+package io.github.manoj_e_s.java_page_simulator.backend_components.cache.caching_policy;
 
-import io.github.manoj_e_s.java_page_simulator.backend_components.Cache;
-import io.github.manoj_e_s.java_page_simulator.backend_components.Page;
+import io.github.manoj_e_s.java_page_simulator.backend_components.cache.Cache;
+import io.github.manoj_e_s.java_page_simulator.backend_components.page.Page;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -13,8 +13,7 @@ public class TwoQPolicy extends CachingPolicy {
     @Override
     public void policyActionsPostPageAccessOnMiss(Page page) {
         this.recencyQ.add(page);
-        System.out.println("Recency Queue:\n" + this.recencyQ);
-        System.out.println("Frequency Queue:\n" + this.frequencyQ);
+        this.showManagementStructures();
     }
 
     @Override
@@ -26,8 +25,7 @@ public class TwoQPolicy extends CachingPolicy {
             this.frequencyQ.remove(page);
             this.frequencyQ.add(page);
         }
-        System.out.println("Recency Queue:\n" + this.recencyQ);
-        System.out.println("Frequency Queue:\n" + this.frequencyQ);
+        this.showManagementStructures();
     }
 
     @Override
@@ -42,5 +40,11 @@ public class TwoQPolicy extends CachingPolicy {
             throw new IllegalStateException("Recency Queue cannot be Empty, when trying to evict a page.");
         }
         Cache.getInstance().evict(evictablePage.getPageName());
+    }
+
+    @Override
+    protected void showManagementStructures() {
+        System.out.println("Recency Queue:\n" + this.recencyQ);
+        System.out.println("Frequency Queue:\n" + this.frequencyQ);
     }
 }

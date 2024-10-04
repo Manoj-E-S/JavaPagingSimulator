@@ -1,7 +1,7 @@
-package io.github.manoj_e_s.java_page_simulator.backend_components.caching_policy;
+package io.github.manoj_e_s.java_page_simulator.backend_components.cache.caching_policy;
 
-import io.github.manoj_e_s.java_page_simulator.backend_components.Cache;
-import io.github.manoj_e_s.java_page_simulator.backend_components.Page;
+import io.github.manoj_e_s.java_page_simulator.backend_components.cache.Cache;
+import io.github.manoj_e_s.java_page_simulator.backend_components.page.Page;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -11,7 +11,7 @@ public class AdaptiveReplacementCachePolicy extends CachingPolicy {
     private final Set<Page> frequencySet = new LinkedHashSet<>();
     private final Set<Page> recencyEvictedSet = new LinkedHashSet<>();
     private final Set<Page> frequencyEvictedSet = new LinkedHashSet<>();
-    private final int cacheSize = Cache.getGlobalConfig().getFramesInCache();
+    private final int cacheSize = Cache.getCacheConfig().getFramesInCache();
     private int recencyBasedBalanceParameter = 0;
 
     @Override
@@ -29,12 +29,7 @@ public class AdaptiveReplacementCachePolicy extends CachingPolicy {
         else {
             this.recencySet.add(page);
         }
-
-        System.out.println("Recency Balanced Parameter:\n" + this.recencyBasedBalanceParameter);
-        System.out.println("Recency Set:\n" + this.recencySet);
-        System.out.println("Frequency Set:\n" + this.frequencySet);
-        System.out.println("RecencyEvicted Set:\n" + this.recencyEvictedSet);
-        System.out.println("FrequencyEvicted Set:\n" + this.frequencyEvictedSet);
+        this.showManagementStructures();
     }
 
     @Override
@@ -46,29 +41,48 @@ public class AdaptiveReplacementCachePolicy extends CachingPolicy {
             this.frequencySet.remove(page);
             this.frequencySet.add(page);
         }
-        System.out.println("Recency Balanced Parameter:\n" + this.recencyBasedBalanceParameter);
-        System.out.println("Recency Set:\n" + this.recencySet);
-        System.out.println("Frequency Set:\n" + this.frequencySet);
-        System.out.println("RecencyEvicted Set:\n" + this.recencyEvictedSet);
-        System.out.println("FrequencyEvicted Set:\n" + this.frequencyEvictedSet);
+        this.showManagementStructures();
     }
 
     @Override
     public void evictPage() {
         Page evictedPage;
         if (!recencySet.isEmpty() && (recencySet.size() > recencyBasedBalanceParameter || (recencySet.size() == recencyBasedBalanceParameter && frequencyEvictedSet.size() > recencyEvictedSet.size()))) {
+            // Prioritize Frequent Pages, and clear from History if required
+            this.removeHistoryPrioritizingFrequency();
+
             // Evict from recencySet and move to recencyEvictedSet
             evictedPage = recencySet.iterator().next();
+            if(evictedPage == null) {
+                // Should Never Occur if the app logic is correct
+                throw new IllegalStateException("Recency Set cannot be Empty, when trying to evict a page.");
+            }
             recencySet.remove(evictedPage);
             recencyEvictedSet.add(evictedPage);
         }
         else {
+            // Prioritize Recent Pages, and clear from History if required
+            this.removeHistoryPrioritizingRecency();
+
             // Evict from frequencySet and move to frequencyEvictedSet
             evictedPage = frequencySet.iterator().next();
+            if(evictedPage == null) {
+                // Should Never Occur if the app logic is correct
+                throw new IllegalStateException("Frequency Set cannot be Empty, when trying to evict a page.");
+            }
             frequencySet.remove(evictedPage);
             frequencyEvictedSet.add(evictedPage);
         }
         Cache.getInstance().evict(evictedPage.getPageName());
+    }
+
+    @Override
+    protected void showManagementStructures() {
+        System.out.println("Recency Balanced Parameter:\n" + this.recencyBasedBalanceParameter);
+        System.out.println("Recency Set:\n" + this.recencySet);
+        System.out.println("Frequency Set:\n" + this.frequencySet);
+        System.out.println("RecencyEvicted Set:\n" + this.recencyEvictedSet);
+        System.out.println("FrequencyEvicted Set:\n" + this.frequencyEvictedSet);
     }
 
 
@@ -79,8 +93,33 @@ public class AdaptiveReplacementCachePolicy extends CachingPolicy {
 
 
     private int decreaseRecencyBasedBalanceParameter() {
+        if (this.recencyEvictedSet.isEmpty()) {
+            return 0;
+        }
         int possibleRecencyBasedBalanceParameter = this.recencyBasedBalanceParameter - Math.max(1, this.frequencyEvictedSet.size()/this.recencyEvictedSet.size());
         return Math.max(0, possibleRecencyBasedBalanceParameter);
+    }
+
+    private void removeHistoryPrioritizingRecency() {
+        if (this.recencyEvictedSet.size() + this.frequencyEvictedSet.size() == 2 * this.cacheSize) {
+            // History Size cannot exceed (2 * CacheSize)
+            if (!this.frequencyEvictedSet.isEmpty()) {
+                this.frequencyEvictedSet.remove(this.frequencyEvictedSet.iterator().next());
+            } else {
+                this.recencyEvictedSet.remove(this.recencyEvictedSet.iterator().next());
+            }
+        }
+    }
+
+    private void removeHistoryPrioritizingFrequency() {
+        if (this.recencyEvictedSet.size() + this.frequencyEvictedSet.size() == 2 * this.cacheSize) {
+            // History Size cannot exceed (2 * CacheSize)
+            if (!this.recencyEvictedSet.isEmpty()) {
+                this.recencyEvictedSet.remove(this.recencyEvictedSet.iterator().next());
+            } else {
+                this.frequencyEvictedSet.remove(this.frequencyEvictedSet.iterator().next());
+            }
+        }
     }
 
 }

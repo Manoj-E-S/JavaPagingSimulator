@@ -1,7 +1,7 @@
-package io.github.manoj_e_s.java_page_simulator.backend_components.caching_policy;
+package io.github.manoj_e_s.java_page_simulator.backend_components.cache.caching_policy;
 
-import io.github.manoj_e_s.java_page_simulator.backend_components.Cache;
-import io.github.manoj_e_s.java_page_simulator.backend_components.Page;
+import io.github.manoj_e_s.java_page_simulator.backend_components.cache.Cache;
+import io.github.manoj_e_s.java_page_simulator.backend_components.page.Page;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ public class LeastFrequentlyUsedPolicy extends CachingPolicy {
     @Override
     public void policyActionsPostPageAccessOnMiss(Page page) {
         this.lfuList.add(new AbstractMap.SimpleEntry<>(page, 1));
-        System.out.println("MFU-List after Page Access:\n" + this.lfuList);
+        this.showManagementStructures();
     }
 
     @Override
@@ -25,13 +25,13 @@ public class LeastFrequentlyUsedPolicy extends CachingPolicy {
                 break;
             }
         }
-        System.out.println("MFU-List after Page Access:\n" + this.lfuList);
+        this.showManagementStructures();
     }
 
     @Override
     public void evictPage() {
         lfuList.sort(Entry.comparingByValue());
-        System.out.println("Sorted MFU-List before Page Eviction:\n" + this.lfuList);
+        this.showSortedMFUList();
 
         // Last Element will be the Most Recently Used and it will be removed
         AbstractMap.SimpleEntry<Page, Integer> evictablePage_freq = lfuList.getFirst();
@@ -41,5 +41,14 @@ public class LeastFrequentlyUsedPolicy extends CachingPolicy {
         }
         this.lfuList.remove(evictablePage_freq);
         Cache.getInstance().evict(evictablePage_freq.getKey().getPageName());
+    }
+
+    @Override
+    protected void showManagementStructures() {
+        System.out.println("MFU-List after Page Access:\n" + this.lfuList);
+    }
+
+    private void showSortedMFUList() {
+        System.out.println("Sorted MFU-List before Page Eviction:\n" + this.lfuList);
     }
 }

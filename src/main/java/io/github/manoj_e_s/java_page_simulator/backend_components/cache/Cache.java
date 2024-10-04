@@ -1,6 +1,7 @@
-package io.github.manoj_e_s.java_page_simulator.backend_components;
+package io.github.manoj_e_s.java_page_simulator.backend_components.cache;
 
-import io.github.manoj_e_s.java_page_simulator.backend_components.caching_policy.CachingPolicy;
+import io.github.manoj_e_s.java_page_simulator.backend_components.page.Page;
+import io.github.manoj_e_s.java_page_simulator.backend_components.cache.caching_policy.CachingPolicy;
 
 import java.util.HashMap;
 
@@ -22,7 +23,7 @@ public class Cache {
 
 
     // GETTERS AND SETTERS
-    public static CacheConfig getGlobalConfig() {
+    public static CacheConfig getCacheConfig() {
         return cacheConfig;
     }
 
@@ -57,7 +58,7 @@ public class Cache {
     }
 
     // Clear the Cache
-    public static synchronized void clear() {
+    public static synchronized void unmount() {
         instance = null;
         cacheConfig = null;
     }

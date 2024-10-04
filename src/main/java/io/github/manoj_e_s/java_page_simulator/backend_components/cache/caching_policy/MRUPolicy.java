@@ -1,7 +1,7 @@
-package io.github.manoj_e_s.java_page_simulator.backend_components.caching_policy;
+package io.github.manoj_e_s.java_page_simulator.backend_components.cache.caching_policy;
 
-import io.github.manoj_e_s.java_page_simulator.backend_components.Cache;
-import io.github.manoj_e_s.java_page_simulator.backend_components.Page;
+import io.github.manoj_e_s.java_page_simulator.backend_components.cache.Cache;
+import io.github.manoj_e_s.java_page_simulator.backend_components.page.Page;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,14 +12,14 @@ public class MRUPolicy extends CachingPolicy {
     @Override
     public void policyActionsPostPageAccessOnMiss(Page page) {
         this.mruList.add(page);
-        System.out.println(this.mruList);
+        this.showManagementStructures();
     }
 
     @Override
     public void policyActionsPostPageAccessOnHit(Page page) {
         this.mruList.remove(page);
         this.mruList.add(page);
-        System.out.println(this.mruList);
+        this.showManagementStructures();
     }
 
     @Override
@@ -31,5 +31,10 @@ public class MRUPolicy extends CachingPolicy {
         }
         this.mruList.remove(evictablePage);
         Cache.getInstance().evict(evictablePage.getPageName());
+    }
+
+    @Override
+    protected void showManagementStructures() {
+        System.out.println("MRU List:\n" + this.mruList);
     }
 }

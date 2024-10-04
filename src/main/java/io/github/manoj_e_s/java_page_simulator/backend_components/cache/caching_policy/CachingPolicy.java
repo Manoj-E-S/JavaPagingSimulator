@@ -1,20 +1,20 @@
-package io.github.manoj_e_s.java_page_simulator.backend_components.caching_policy;
+package io.github.manoj_e_s.java_page_simulator.backend_components.cache.caching_policy;
 
 
-import io.github.manoj_e_s.java_page_simulator.backend_components.Cache;
-import io.github.manoj_e_s.java_page_simulator.backend_components.DelayHandler;
-import io.github.manoj_e_s.java_page_simulator.backend_components.Disk;
-import io.github.manoj_e_s.java_page_simulator.backend_components.Page;
+import io.github.manoj_e_s.java_page_simulator.backend_components.cache.Cache;
+import io.github.manoj_e_s.java_page_simulator.backend_components.performance.DelayHandler;
+import io.github.manoj_e_s.java_page_simulator.backend_components.disk.Disk;
+import io.github.manoj_e_s.java_page_simulator.backend_components.page.Page;
 
 public abstract class CachingPolicy {
 
     protected void delayByHit() {
-        int delay = Cache.getGlobalConfig().getCacheHitTimeIntervalInSeconds();
+        int delay = Cache.getCacheConfig().getCacheHitTimeIntervalInSeconds();
         DelayHandler.delayBySeconds(delay, "Cache Hit (" + delay + "s)");
     }
 
     protected void delayByMiss() {
-        int delay = Cache.getGlobalConfig().getCacheMissTimeIntervalInSeconds();
+        int delay = Cache.getCacheConfig().getCacheMissTimeIntervalInSeconds();
         DelayHandler.delayBySeconds(delay, "Cache Miss (" + delay + "s)");
     }
 
@@ -52,5 +52,8 @@ public abstract class CachingPolicy {
 
     // Evict Page - Page Eviction on Page-miss, and the Cache is Full
     public abstract void evictPage();
+
+    // Show All Policy Related Management Structures
+    protected abstract void showManagementStructures();
 
 }

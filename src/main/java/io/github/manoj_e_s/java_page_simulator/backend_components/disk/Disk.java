@@ -1,4 +1,6 @@
-package io.github.manoj_e_s.java_page_simulator.backend_components;
+package io.github.manoj_e_s.java_page_simulator.backend_components.disk;
+
+import io.github.manoj_e_s.java_page_simulator.backend_components.page.Page;
 
 import java.util.HashMap;
 
