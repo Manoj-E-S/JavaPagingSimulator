@@ -1,18 +1,12 @@
 package io.github.manoj_e_s.java_page_simulator.backend_components;
 
-import io.github.manoj_e_s.java_page_simulator.backend_components.caching_policy.CachingPolicy;
-
-
-public class GlobalConfig {
+public class CacheConfig {
 
     // Size of a page in KB
     public int pageSizeInKb;
 
     // No. of Frames in the cache
     public int framesInCache;
-
-    // Caching Policy in Use
-    public final CachingPolicy cachingPolicy;
 
     // time values
     public int cacheHitTimeIntervalInSeconds;
@@ -37,10 +31,6 @@ public class GlobalConfig {
 
     public void setFramesInCache(int framesInCache) {
         this.framesInCache = framesInCache;
-    }
-
-    public CachingPolicy getCachingPolicy() {
-        return cachingPolicy;
     }
 
     public int getCacheHitTimeIntervalInSeconds() {
@@ -68,19 +58,21 @@ public class GlobalConfig {
     }
 
 
+    // No Params Constructor
+    public CacheConfig() {
+    }
+
     // All Params Constructor
-    public GlobalConfig(
+    public CacheConfig(
             boolean measurePerformance,
             int cacheMissTimeIntervalInSeconds,
             int cacheHitTimeIntervalInSeconds,
-            CachingPolicy cachingPolicy,
             int framesInCache,
             int pageSizeInKb
     ) {
         this.measurePerformance = measurePerformance;
         this.cacheMissTimeIntervalInSeconds = cacheMissTimeIntervalInSeconds;
         this.cacheHitTimeIntervalInSeconds = cacheHitTimeIntervalInSeconds;
-        this.cachingPolicy = cachingPolicy;
         this.framesInCache = framesInCache;
         this.pageSizeInKb = pageSizeInKb;
     }
@@ -92,7 +84,6 @@ public class GlobalConfig {
         return "GlobalConfig {\n" +
                 "\tpageSize = " + pageSizeInKb + "kB,\n" +
                 "\tframesInCache = " + framesInCache + ",\n" +
-                "\tcachingPolicy = " + cachingPolicy + ",\n" +
                 "\tcacheHitTimeInterval = " + cacheHitTimeIntervalInSeconds + "s,\n" +
                 "\tcacheMissTimeInterval = " + cacheMissTimeIntervalInSeconds + "s,\n" +
                 "\tmeasurePerformance = " + measurePerformance + "\n" +

@@ -8,13 +8,13 @@ import java.util.HashMap;
 public class Cache {
 
     // Caching Policy
-    public CachingPolicy cachingPolicy;
+    public static CachingPolicy cachingPolicy;
 
     // Frames K: pageName, V: Page
     private final HashMap<String, Page> frames;
 
     // Global Config
-    private static GlobalConfig globalConfig;
+    private static CacheConfig cacheConfig;
 
 
     // INSTANCE
@@ -22,23 +22,30 @@ public class Cache {
 
 
     // GETTERS AND SETTERS
-    public static GlobalConfig getGlobalConfig() {
-        return globalConfig;
+    public static CacheConfig getGlobalConfig() {
+        return cacheConfig;
+    }
+
+    public static CachingPolicy getCachingPolicy() {
+        return cachingPolicy;
+    }
+
+    public static void setCachingPolicy(CachingPolicy cachingPolicy) {
+        Cache.cachingPolicy = cachingPolicy;
     }
 
 
     // GlobalConfig PARAM CONSTRUCTOR
-    private Cache(GlobalConfig gc) {
-        Cache.globalConfig = gc;
-        this.cachingPolicy = gc.getCachingPolicy();
+    private Cache(CacheConfig cc) {
+        Cache.cacheConfig = cc;
         this.frames = new HashMap<>();
     }
 
 
     // INSTANCE RELATED METHODS
     // Instantiate
-    public static void instantiate(GlobalConfig globalConfig) {
-        Cache.instance = new Cache(globalConfig);
+    public static void instantiate(CacheConfig cacheConfig) {
+        Cache.instance = new Cache(cacheConfig);
     }
 
     // Get Instance
@@ -52,7 +59,7 @@ public class Cache {
     // Clear the Cache
     public static synchronized void clear() {
         instance = null;
-        globalConfig = null;
+        cacheConfig = null;
     }
 
 
@@ -61,7 +68,7 @@ public class Cache {
     @Override
     public String toString() {
         return "Cache {\n" +
-                "\tnumOfFrames = " + globalConfig.getFramesInCache() + ",\n" +
+                "\tnumOfFrames = " + cacheConfig.getFramesInCache() + ",\n" +
                 "\tcachingPolicy = " + cachingPolicy + ",\n" +
                 "\tframes = " + frames + "\n" +
                 '}';
@@ -69,7 +76,7 @@ public class Cache {
 
     // Is Cache Full?
     public boolean isFull() {
-        return this.frames.size() >= globalConfig.getFramesInCache();
+        return this.frames.size() >= cacheConfig.getFramesInCache();
     }
 
     // Put page
