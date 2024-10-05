@@ -2,6 +2,7 @@ package io.github.manoj_e_s.java_page_simulator.backend_components.cache.caching
 
 import io.github.manoj_e_s.java_page_simulator.backend_components.cache.Cache;
 import io.github.manoj_e_s.java_page_simulator.backend_components.page.Page;
+import io.github.manoj_e_s.java_page_simulator.backend_components.performance.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,11 @@ public class LRUPolicy extends CachingPolicy {
 
     @Override
     protected void showManagementStructures() {
-        System.out.println(this.lruList);
+        Logger.getInstance().logVerbose(this.lruList, "LRU List:\n");
+    }
+
+    @Override
+    public String toString() {
+        return "Least Recently Used (LRU)";
     }
 }

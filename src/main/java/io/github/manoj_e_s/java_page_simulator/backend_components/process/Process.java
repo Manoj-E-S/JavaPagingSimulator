@@ -2,6 +2,7 @@ package io.github.manoj_e_s.java_page_simulator.backend_components.process;
 
 import io.github.manoj_e_s.java_page_simulator.backend_components.page.Page;
 import io.github.manoj_e_s.java_page_simulator.backend_components.cache.Cache;
+import io.github.manoj_e_s.java_page_simulator.backend_components.performance.Logger;
 
 import java.io.IOException;
 import java.util.Queue;
@@ -70,15 +71,14 @@ public class Process {
     }
 
     public void startSimulation() {
-        Cache cache = Cache.getInstance();
-        System.out.println(cache);
-
-        System.out.println("Running: Process(PID=" + this.pid + ')');
+        Logger.getInstance().log(null, "\n------------------ STARTING: Process(PID=" + this.pid + ") ------------------");
         while(this.pageLines.peek() != null){
             ProcessFileLine pageLine = this.pageLines.poll();
-            Page p = cache.get(pageLine.pageName());
+            Page p = Cache.getInstance().get(pageLine.pageName());
             p.run(pageLine.timeToExecuteInSeconds());
         }
+        Cache.getPerformanceMetrics().log();
+        Logger.getInstance().log(null, "\n----------------------- END OF PROCESS -----------------------\n");
     }
 
 }

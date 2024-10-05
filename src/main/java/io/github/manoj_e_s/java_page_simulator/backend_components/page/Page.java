@@ -2,6 +2,7 @@ package io.github.manoj_e_s.java_page_simulator.backend_components.page;
 
 import io.github.manoj_e_s.java_page_simulator.backend_components.disk.Disk;
 import io.github.manoj_e_s.java_page_simulator.backend_components.performance.DelayHandler;
+import io.github.manoj_e_s.java_page_simulator.backend_components.performance.Logger;
 
 import java.util.Objects;
 
@@ -72,7 +73,8 @@ public class Page {
 
     // run
     public void run(int timeToExecuteInSeconds) {
-        System.out.println("Executing: Page(" + this.pageName + ')');
+        Logger.getInstance().log(null, "Executing: Page(" + this.pageName + ')');
         DelayHandler.delayBySeconds(timeToExecuteInSeconds, "Execution (" + timeToExecuteInSeconds + "s)\n");
+        Logger.getInstance().log(null, "------\n");
     }
 }

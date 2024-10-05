@@ -2,6 +2,7 @@ package io.github.manoj_e_s.java_page_simulator.backend_components.cache.caching
 
 import io.github.manoj_e_s.java_page_simulator.backend_components.cache.Cache;
 import io.github.manoj_e_s.java_page_simulator.backend_components.page.Page;
+import io.github.manoj_e_s.java_page_simulator.backend_components.performance.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,11 @@ public class MRUPolicy extends CachingPolicy {
 
     @Override
     protected void showManagementStructures() {
-        System.out.println("MRU List:\n" + this.mruList);
+        Logger.getInstance().logVerbose(this.mruList, "MRU List:\n");
+    }
+
+    @Override
+    public String toString() {
+        return "Most Recently Used (MRU)";
     }
 }

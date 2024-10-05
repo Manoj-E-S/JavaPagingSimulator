@@ -2,27 +2,40 @@ package io.github.manoj_e_s.java_page_simulator.backend_components.cache;
 
 import io.github.manoj_e_s.java_page_simulator.backend_components.page.Page;
 import io.github.manoj_e_s.java_page_simulator.backend_components.cache.caching_policy.CachingPolicy;
+import io.github.manoj_e_s.java_page_simulator.backend_components.performance.PerformanceMetrics;
 
 import java.util.HashMap;
 
 // Singleton Cache
 public class Cache {
 
+    // DATA MEMBERS ----------------------------------------------------------------------------------------------------
     // Caching Policy
     public static CachingPolicy cachingPolicy;
 
     // Frames K: pageName, V: Page
     private final HashMap<String, Page> frames;
 
-    // Global Config
+    // Cache Config
     private static CacheConfig cacheConfig;
 
+    // Performance Metrics
+    private final static PerformanceMetrics performanceMetrics = new PerformanceMetrics();
 
-    // INSTANCE
+
+    // INSTANCE --------------------------------------------------------------------------------------------------------
     private static Cache instance = null;
 
 
-    // GETTERS AND SETTERS
+    // CONSTRUCTORS ----------------------------------------------------------------------------------------------------
+    // GlobalConfig PARAM CONSTRUCTOR
+    private Cache(CacheConfig cc) {
+        Cache.cacheConfig = cc;
+        this.frames = new HashMap<>();
+    }
+
+
+    // GETTERS AND SETTERS ---------------------------------------------------------------------------------------------
     public static CacheConfig getCacheConfig() {
         return cacheConfig;
     }
@@ -35,15 +48,11 @@ public class Cache {
         Cache.cachingPolicy = cachingPolicy;
     }
 
-
-    // GlobalConfig PARAM CONSTRUCTOR
-    private Cache(CacheConfig cc) {
-        Cache.cacheConfig = cc;
-        this.frames = new HashMap<>();
+    public static PerformanceMetrics getPerformanceMetrics() {
+        return Cache.performanceMetrics;
     }
 
-
-    // INSTANCE RELATED METHODS
+    // INSTANCE RELATED METHODS ----------------------------------------------------------------------------------------
     // Instantiate
     public static void instantiate(CacheConfig cacheConfig) {
         Cache.instance = new Cache(cacheConfig);
@@ -57,15 +66,14 @@ public class Cache {
         return instance;
     }
 
-    // Clear the Cache
+    // Unmount the Cache
     public static synchronized void unmount() {
         instance = null;
         cacheConfig = null;
     }
 
 
-    // METHODS
-
+    // METHODS  --------------------------------------------------------------------------------------------------------
     @Override
     public String toString() {
         return "Cache {\n" +
@@ -86,26 +94,39 @@ public class Cache {
             throw new IllegalStateException("Page cannot be NULL while putting into the Cache");
         }
         this.frames.put(page.getPageName(), page);
+        Cache.performanceMetrics.recordMemoryUsage("Insert Page(" + page.getPageName() + ')');
     }
 
     // Get page
     public Page get(String pageName) {
+        Cache.performanceMetrics.startTimer();
+
         Page requiredPage = this.frames.get(pageName);
         if(requiredPage != null) {
             // Cache Hit
+            Cache.performanceMetrics.recordHit();
+
             cachingPolicy.handleHit(requiredPage);
+
+            Cache.performanceMetrics.stopTimer();
             return requiredPage;
         }
 
         // Cache Miss
+        Cache.performanceMetrics.recordMiss();
+
         // Add required page to cache by Policy and get it
         requiredPage = cachingPolicy.handleMiss(pageName);
+
+        Cache.performanceMetrics.stopTimer();
         return requiredPage;
     }
 
     // Evict page
     public void evict(String pageName) {
         this.frames.remove(pageName);
+        Cache.performanceMetrics.recordEviction();
+        Cache.performanceMetrics.recordMemoryUsage("Evict Page(" + pageName + ')');
     }
 
 }

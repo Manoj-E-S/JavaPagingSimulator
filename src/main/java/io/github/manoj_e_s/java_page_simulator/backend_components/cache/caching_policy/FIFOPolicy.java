@@ -2,6 +2,7 @@ package io.github.manoj_e_s.java_page_simulator.backend_components.cache.caching
 
 import io.github.manoj_e_s.java_page_simulator.backend_components.cache.Cache;
 import io.github.manoj_e_s.java_page_simulator.backend_components.page.Page;
+import io.github.manoj_e_s.java_page_simulator.backend_components.performance.Logger;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -34,6 +35,11 @@ public class FIFOPolicy extends CachingPolicy {
 
     @Override
     protected void showManagementStructures() {
-        System.out.println(this.fifoQ);
+        Logger.getInstance().logVerbose(this.fifoQ, "FIFO Queue:\n");
+    }
+
+    @Override
+    public String toString() {
+        return "First-in First-out (FIFO)";
     }
 }

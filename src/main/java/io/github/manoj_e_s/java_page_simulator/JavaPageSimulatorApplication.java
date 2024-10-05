@@ -2,6 +2,7 @@ package io.github.manoj_e_s.java_page_simulator;
 
 import io.github.manoj_e_s.java_page_simulator.backend_components.cache.Cache;
 import io.github.manoj_e_s.java_page_simulator.backend_components.cache.CacheConfig;
+import io.github.manoj_e_s.java_page_simulator.backend_components.performance.Logger;
 import io.github.manoj_e_s.java_page_simulator.backend_components.process.Process;
 import io.github.manoj_e_s.java_page_simulator.backend_components.cache.caching_policy.*;
 
@@ -12,6 +13,9 @@ import java.util.List;
 public class JavaPageSimulatorApplication {
 
 	public static void main(String[] args) throws IOException {
+		Logger.configure(false);
+		Logger.getInstance().log(null, "\n");
+
 		CacheConfig cacheConfig = new CacheConfig();
 		cacheConfig.setPageSizeInKb(1024);
 		cacheConfig.setMeasurePerformance(false);
@@ -30,10 +34,12 @@ public class JavaPageSimulatorApplication {
 		AdaptiveReplacementCachePolicy arcPolicy = new AdaptiveReplacementCachePolicy();
 
 		Cache.setCachingPolicy(arcPolicy);
-		System.out.println(cacheConfig);
+
+		Logger.getInstance().logVerbose(cacheConfig, "Cache Config:\n");
+		Logger.getInstance().log(Cache.getCachingPolicy(), "Caching Policy: ");
 
 		List<Process> processes = new ArrayList<>();
-		for (int i = 1; i <= 14; i++) {
+		for (int i = 1; i <= 2; i++) {
 			Process p = new Process("/home/manoj/Manoj/Projects/java-page-simulator/src/main/resources/process_files/p" + i + ".txt", "p" + (i-1));
 			processes.add(p);
 			processes.get(i-1).startSimulation();

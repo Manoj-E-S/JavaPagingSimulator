@@ -2,6 +2,7 @@ package io.github.manoj_e_s.java_page_simulator.backend_components.cache.caching
 
 import io.github.manoj_e_s.java_page_simulator.backend_components.cache.Cache;
 import io.github.manoj_e_s.java_page_simulator.backend_components.page.Page;
+import io.github.manoj_e_s.java_page_simulator.backend_components.performance.Logger;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -44,7 +45,12 @@ public class TwoQPolicy extends CachingPolicy {
 
     @Override
     protected void showManagementStructures() {
-        System.out.println("Recency Queue:\n" + this.recencyQ);
-        System.out.println("Frequency Queue:\n" + this.frequencyQ);
+        Logger.getInstance().logVerbose(this.recencyQ, "Recency Queue:\n");
+        Logger.getInstance().logVerbose(this.frequencyQ, "Frequency Queue:\n");
+    }
+
+    @Override
+    public String toString() {
+        return "Two Queue (2Q)";
     }
 }

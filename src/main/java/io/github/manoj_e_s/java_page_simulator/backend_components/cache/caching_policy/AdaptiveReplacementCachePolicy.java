@@ -2,6 +2,7 @@ package io.github.manoj_e_s.java_page_simulator.backend_components.cache.caching
 
 import io.github.manoj_e_s.java_page_simulator.backend_components.cache.Cache;
 import io.github.manoj_e_s.java_page_simulator.backend_components.page.Page;
+import io.github.manoj_e_s.java_page_simulator.backend_components.performance.Logger;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -78,13 +79,17 @@ public class AdaptiveReplacementCachePolicy extends CachingPolicy {
 
     @Override
     protected void showManagementStructures() {
-        System.out.println("Recency Balanced Parameter:\n" + this.recencyBasedBalanceParameter);
-        System.out.println("Recency Set:\n" + this.recencySet);
-        System.out.println("Frequency Set:\n" + this.frequencySet);
-        System.out.println("RecencyEvicted Set:\n" + this.recencyEvictedSet);
-        System.out.println("FrequencyEvicted Set:\n" + this.frequencyEvictedSet);
+        Logger.getInstance().logVerbose(this.recencyBasedBalanceParameter, "Recency Balanced Parameter:\n");
+        Logger.getInstance().logVerbose(this.recencySet, "Recency Set:\n");
+        Logger.getInstance().logVerbose(this.frequencySet, "Frequency Set:\n");
+        Logger.getInstance().logVerbose(this.recencyEvictedSet, "RecencyEvicted Set:\n");
+        Logger.getInstance().logVerbose(this.frequencyEvictedSet, "FrequencyEvicted Set:\n");
     }
 
+    @Override
+    public String toString() {
+        return "Adaptive Replacement Cache (ARC)";
+    }
 
     private int increaseRecencyBasedBalanceParameter() {
         int possibleRecencyBasedBalanceParameter = this.recencyBasedBalanceParameter + Math.max(1, this.frequencyEvictedSet.size()/this.recencyEvictedSet.size());

@@ -21,6 +21,7 @@ public abstract class CachingPolicy {
     // Handle Cache Hit
     public void handleHit(Page page) {
         this.delayByHit();
+        Cache.getPerformanceMetrics().recordHit();
 
         // Post Page Access Action
         this.policyActionsPostPageAccessOnHit(page);
@@ -29,6 +30,7 @@ public abstract class CachingPolicy {
     // Handle Cache Miss
     public Page handleMiss(String pageName) {
         this.delayByMiss();
+        Cache.getPerformanceMetrics().recordMiss();
 
         if(Cache.getInstance().isFull()) {
             // Page Fault when Cache is full

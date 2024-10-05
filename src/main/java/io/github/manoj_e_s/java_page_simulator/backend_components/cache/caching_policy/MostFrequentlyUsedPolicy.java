@@ -2,6 +2,7 @@ package io.github.manoj_e_s.java_page_simulator.backend_components.cache.caching
 
 import io.github.manoj_e_s.java_page_simulator.backend_components.cache.Cache;
 import io.github.manoj_e_s.java_page_simulator.backend_components.page.Page;
+import io.github.manoj_e_s.java_page_simulator.backend_components.performance.Logger;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -44,10 +45,15 @@ public class MostFrequentlyUsedPolicy extends CachingPolicy {
 
     @Override
     protected void showManagementStructures() {
-        System.out.println("MFU-List after Page Access:\n" + this.mfuList);
+        Logger.getInstance().logVerbose(this.mfuList, "MFU-List after Page Access:\n");
+    }
+
+    @Override
+    public String toString() {
+        return "Most Frequently Used (MFU)";
     }
 
     private void showSortedMFUList() {
-        System.out.println("Sorted MFU-List before Page Eviction:\n" + this.mfuList);
+        Logger.getInstance().logVerbose(this.mfuList, "Sorted MFU-List before Page Eviction:\n");
     }
 }
