@@ -20,7 +20,7 @@ public class Cache {
     private static CacheConfig cacheConfig;
 
     // Performance Metrics
-    private final static PerformanceMetrics performanceMetrics = new PerformanceMetrics();
+    private static PerformanceMetrics performanceMetrics;
 
 
     // INSTANCE --------------------------------------------------------------------------------------------------------
@@ -31,6 +31,7 @@ public class Cache {
     // GlobalConfig PARAM CONSTRUCTOR
     private Cache(CacheConfig cc) {
         Cache.cacheConfig = cc;
+        Cache.performanceMetrics = new PerformanceMetrics();
         this.frames = new HashMap<>();
     }
 
@@ -70,6 +71,7 @@ public class Cache {
     public static synchronized void unmount() {
         instance = null;
         cacheConfig = null;
+        performanceMetrics = null;
     }
 
 
@@ -86,6 +88,11 @@ public class Cache {
     // Is Cache Full?
     public boolean isFull() {
         return this.frames.size() >= cacheConfig.getFramesInCache();
+    }
+
+    // How many page-slots are occupied in the Cache?
+    public int getOccupiedPageSlots() {
+        return this.frames.size();
     }
 
     // Put page

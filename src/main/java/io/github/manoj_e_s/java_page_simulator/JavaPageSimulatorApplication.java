@@ -13,37 +13,73 @@ import java.util.List;
 public class JavaPageSimulatorApplication {
 
 	public static void main(String[] args) throws IOException {
+		setupLogger();
+
+		CacheConfig cacheConfig = loadCacheConfig();
+		Logger.getInstance().logVerbose(cacheConfig, "Cache Config:\n");
+
+		runAllProcessesUnderEveryPolicy(cacheConfig);
+	}
+
+	private static void runAllProcessesUnderEveryPolicy(CacheConfig cacheConfig) throws IOException {
+		List<CachingPolicy> policies = getAllPolicies();
+
+		for (CachingPolicy c: policies) {
+			Logger.getInstance().log(null, "\n################################################################################\n");
+			Cache.instantiate(cacheConfig);
+			Cache.setCachingPolicy(c);
+			Logger.getInstance().log(Cache.getCachingPolicy(), "Caching Policy: ");
+
+			List<Process> processes = new ArrayList<>();
+			for (int i = 1; i <= 14; i++) {
+				Process p = new Process(
+						"/home/manoj/Manoj/Projects/java-page-simulator/src/main/resources/process_files/p" + i + ".txt",
+						"p" + (i-1),
+						false
+				);
+				processes.add(p);
+				processes.get(i-1).startSimulation();
+			}
+			Cache.getPerformanceMetrics().netLog();
+			Cache.unmount();
+			Logger.getInstance().log(null, "\n################################################################################\n");
+		}
+	}
+
+	private static CacheConfig loadCacheConfig() {
+		CacheConfig cacheConfig = new CacheConfig();
+		cacheConfig.setPageSizeInBytes(1024);
+		cacheConfig.setMeasurePerformance(true);
+		cacheConfig.setFramesInCache(4);
+		cacheConfig.setCacheHitTimeIntervalInMillis(0);
+		cacheConfig.setCacheMissTimeIntervalInMillis(3);
+		return cacheConfig;
+	}
+
+	private static void setupLogger() {
 		Logger.configure(false);
 		Logger.getInstance().log(null, "\n");
+	}
 
-		CacheConfig cacheConfig = new CacheConfig();
-		cacheConfig.setPageSizeInKb(1);
-		cacheConfig.setMeasurePerformance(false);
-		cacheConfig.setFramesInCache(10);
-		cacheConfig.setCacheHitTimeIntervalInSeconds(0);
-		cacheConfig.setCacheMissTimeIntervalInSeconds(3);
-
-		Cache.instantiate(cacheConfig);
-
+	private static List<CachingPolicy> getAllPolicies() {
 		FIFOPolicy fifoPolicy = new FIFOPolicy();
 		LRUPolicy lruPolicy = new LRUPolicy();
 		MRUPolicy mruPolicy = new MRUPolicy();
-		MostFrequentlyUsedPolicy mfuPolicy = new MostFrequentlyUsedPolicy();
 		LeastFrequentlyUsedPolicy lfuPolicy = new LeastFrequentlyUsedPolicy();
+		MostFrequentlyUsedPolicy mfuPolicy = new MostFrequentlyUsedPolicy();
 		TwoQPolicy twoQPolicy = new TwoQPolicy();
 		AdaptiveReplacementCachePolicy arcPolicy = new AdaptiveReplacementCachePolicy();
 
-		Cache.setCachingPolicy(twoQPolicy);
+		List<CachingPolicy> policies = new ArrayList<>();
+		policies.add(fifoPolicy);
+		policies.add(lruPolicy);
+		policies.add(mruPolicy);
+		policies.add(lfuPolicy);
+		policies.add(mfuPolicy);
+		policies.add(twoQPolicy);
+		policies.add(arcPolicy);
 
-		Logger.getInstance().logVerbose(cacheConfig, "Cache Config:\n");
-		Logger.getInstance().log(Cache.getCachingPolicy(), "Caching Policy: ");
-
-		List<Process> processes = new ArrayList<>();
-		for (int i = 1; i <= 14; i++) {
-			Process p = new Process("/home/manoj/Manoj/Projects/java-page-simulator/src/main/resources/process_files/p" + i + ".txt", "p" + (i-1));
-			processes.add(p);
-			processes.get(i-1).startSimulation();
-		}
-    }
+		return policies;
+	}
 
 }

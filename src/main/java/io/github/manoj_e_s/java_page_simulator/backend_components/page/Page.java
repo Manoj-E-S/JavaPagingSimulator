@@ -80,9 +80,9 @@ public class Page {
     }
 
     // run
-    public void run(int timeToExecuteInSeconds) {
+    public void run(int timeToExecuteInMillis) {
         Logger.getInstance().log(null, "Executing: Page(" + this.pageName + ')');
-        DelayHandler.delayBySeconds(timeToExecuteInSeconds, "Execution (" + timeToExecuteInSeconds + "s)\n");
+        DelayHandler.delayByMillis(timeToExecuteInMillis, "Execution (" + timeToExecuteInMillis + "ms)\n");
         Logger.getInstance().log(null, "------\n");
     }
 }

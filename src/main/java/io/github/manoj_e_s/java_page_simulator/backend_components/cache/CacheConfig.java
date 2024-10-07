@@ -3,26 +3,26 @@ package io.github.manoj_e_s.java_page_simulator.backend_components.cache;
 public class CacheConfig {
 
     // Size of a page in KB
-    public int pageSizeInKb;
+    public int pageSizeInBytes;
 
     // No. of Frames in the cache
     public int framesInCache;
 
     // time values
-    public int cacheHitTimeIntervalInSeconds;
-    public int cacheMissTimeIntervalInSeconds;
+    public int cacheHitTimeIntervalInMillis;
+    public int cacheMissTimeIntervalInMillis;
 
     // Should Performance be measured?
     public boolean measurePerformance;
 
 
     // Getters and Setters
-    public int getPageSizeInKb() {
-        return pageSizeInKb;
+    public int getPageSizeInBytes() {
+        return pageSizeInBytes;
     }
 
-    public void setPageSizeInKb(int pageSizeInKb) {
-        this.pageSizeInKb = pageSizeInKb;
+    public void setPageSizeInBytes(int pageSizeInBytes) {
+        this.pageSizeInBytes = pageSizeInBytes;
     }
 
     public int getFramesInCache() {
@@ -33,20 +33,20 @@ public class CacheConfig {
         this.framesInCache = framesInCache;
     }
 
-    public int getCacheHitTimeIntervalInSeconds() {
-        return cacheHitTimeIntervalInSeconds;
+    public int getCacheHitTimeIntervalInMillis() {
+        return cacheHitTimeIntervalInMillis;
     }
 
-    public void setCacheHitTimeIntervalInSeconds(int cacheHitTimeIntervalInSeconds) {
-        this.cacheHitTimeIntervalInSeconds = cacheHitTimeIntervalInSeconds;
+    public void setCacheHitTimeIntervalInMillis(int cacheHitTimeIntervalInMillis) {
+        this.cacheHitTimeIntervalInMillis = cacheHitTimeIntervalInMillis;
     }
 
-    public int getCacheMissTimeIntervalInSeconds() {
-        return cacheMissTimeIntervalInSeconds;
+    public int getCacheMissTimeIntervalInMillis() {
+        return cacheMissTimeIntervalInMillis;
     }
 
-    public void setCacheMissTimeIntervalInSeconds(int cacheMissTimeIntervalInSeconds) {
-        this.cacheMissTimeIntervalInSeconds = cacheMissTimeIntervalInSeconds;
+    public void setCacheMissTimeIntervalInMillis(int cacheMissTimeIntervalInMillis) {
+        this.cacheMissTimeIntervalInMillis = cacheMissTimeIntervalInMillis;
     }
 
     public boolean isMeasurePerformance() {
@@ -65,16 +65,16 @@ public class CacheConfig {
     // All Params Constructor
     public CacheConfig(
             boolean measurePerformance,
-            int cacheMissTimeIntervalInSeconds,
-            int cacheHitTimeIntervalInSeconds,
+            int cacheMissTimeIntervalInMillis,
+            int cacheHitTimeIntervalInMillis,
             int framesInCache,
-            int pageSizeInKb
+            int pageSizeInBytes
     ) {
         this.measurePerformance = measurePerformance;
-        this.cacheMissTimeIntervalInSeconds = cacheMissTimeIntervalInSeconds;
-        this.cacheHitTimeIntervalInSeconds = cacheHitTimeIntervalInSeconds;
+        this.cacheMissTimeIntervalInMillis = cacheMissTimeIntervalInMillis;
+        this.cacheHitTimeIntervalInMillis = cacheHitTimeIntervalInMillis;
         this.framesInCache = framesInCache;
-        this.pageSizeInKb = pageSizeInKb;
+        this.pageSizeInBytes = pageSizeInBytes;
     }
 
 
@@ -82,10 +82,10 @@ public class CacheConfig {
     @Override
     public String toString() {
         return "CacheConfig {\n" +
-                "\tpageSize = " + pageSizeInKb + "kB,\n" +
+                "\tpageSize = " + pageSizeInBytes + "kB,\n" +
                 "\tframesInCache = " + framesInCache + ",\n" +
-                "\tcacheHitTimeInterval = " + cacheHitTimeIntervalInSeconds + "s,\n" +
-                "\tcacheMissTimeInterval = " + cacheMissTimeIntervalInSeconds + "s,\n" +
+                "\tcacheHitTimeInterval = " + cacheHitTimeIntervalInMillis + "s,\n" +
+                "\tcacheMissTimeInterval = " + cacheMissTimeIntervalInMillis + "s,\n" +
                 "\tmeasurePerformance = " + measurePerformance + "\n" +
                 '}';
     }

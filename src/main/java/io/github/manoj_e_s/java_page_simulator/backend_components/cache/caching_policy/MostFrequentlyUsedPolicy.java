@@ -17,7 +17,7 @@ public class MostFrequentlyUsedPolicy extends CachingPolicy {
         this.showManagementStructures();
 
         Cache.getPerformanceMetrics().incrementMemoryInBytes(page.getByteSize() + Integer.BYTES);
-        Cache.getPerformanceMetrics().recordMemoryUsage("Policy Insert Page");
+        Cache.getPerformanceMetrics().recordMemoryUsage("Policy Insert Page(" + page.getPageName() + ')');
     }
 
     @Override
@@ -44,7 +44,7 @@ public class MostFrequentlyUsedPolicy extends CachingPolicy {
         }
 
         Cache.getPerformanceMetrics().decrementMemoryInBytes(evictablePage_freq.getKey().getByteSize() + Integer.BYTES);
-        Cache.getPerformanceMetrics().recordMemoryUsage("Policy Evict Page");
+        Cache.getPerformanceMetrics().recordMemoryUsage("Policy Evict Page(" + evictablePage_freq.getKey().getPageName() + ')');
 
         this.mfuList.remove(evictablePage_freq);
         Cache.getInstance().evict(evictablePage_freq.getKey().getPageName());

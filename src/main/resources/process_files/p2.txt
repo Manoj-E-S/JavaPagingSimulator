@@ -6,7 +6,3 @@ pageA 2
 pageC 2
 pageB 1
 pageA 2
-# Below lines added to test TwoQPolicy
-pageC 1
-pageA 1
-pageE 1

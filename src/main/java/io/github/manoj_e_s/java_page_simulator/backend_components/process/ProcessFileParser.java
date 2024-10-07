@@ -17,7 +17,7 @@ public class ProcessFileParser {
             while ( (readLine = reader.readLine()) != null ) {
                 if( readLine.strip().charAt(0) == '#' ) continue;
                 if( readLine.strip().charAt(0) == '-' ) {
-                    DelayHandler.delayBySeconds(Integer.parseInt(readLine.split(" ")[1]), "Delay in Page arrival");
+                    DelayHandler.delayByMillis(Integer.parseInt(readLine.split(" ")[1]), "Delay in Page arrival");
                     continue;
                 }
 

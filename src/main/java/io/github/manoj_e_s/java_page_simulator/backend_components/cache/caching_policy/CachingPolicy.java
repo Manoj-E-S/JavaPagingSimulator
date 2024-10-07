@@ -9,13 +9,13 @@ import io.github.manoj_e_s.java_page_simulator.backend_components.page.Page;
 public abstract class CachingPolicy {
 
     protected void delayByHit() {
-        int delay = Cache.getCacheConfig().getCacheHitTimeIntervalInSeconds();
-        DelayHandler.delayBySeconds(delay, "Cache Hit (" + delay + "s)");
+        int delay = Cache.getCacheConfig().getCacheHitTimeIntervalInMillis();
+        DelayHandler.delayByMillis(delay, "Cache Hit (" + delay + "ms)");
     }
 
     protected void delayByMiss() {
-        int delay = Cache.getCacheConfig().getCacheMissTimeIntervalInSeconds();
-        DelayHandler.delayBySeconds(delay, "Cache Miss (" + delay + "s)");
+        int delay = Cache.getCacheConfig().getCacheMissTimeIntervalInMillis();
+        DelayHandler.delayByMillis(delay, "Cache Miss (" + delay + "ms)");
     }
 
     // Handle Cache Hit

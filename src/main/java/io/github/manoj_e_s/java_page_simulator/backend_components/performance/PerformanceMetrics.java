@@ -3,18 +3,21 @@ package io.github.manoj_e_s.java_page_simulator.backend_components.performance;
 import io.github.manoj_e_s.java_page_simulator.backend_components.cache.Cache;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class PerformanceMetrics {
-    private long hits;
-    private long misses;
-    private long evictions;
+    private long perProcessHits;
+    private long perProcessMisses;
+    private long perProcessEvictions;
+    private long netHits;
+    private long netMisses;
+    private long netEvictions;
     private long accessStartTime; // in ns
     private long accessEndTime; // in ns
-    private long usedMemory; // in KB
-    private final List<Long> accessTimes = new ArrayList<>();
-    private final HashMap<String, Long> memoryUsages = new HashMap<>();
+    private long usedMemory; // in Bytes
+    private List<Long> accessTimes = new ArrayList<>();
+    private final LinkedHashMap<String, Long> memoryUsages = new LinkedHashMap<>();
 
     public void startTimer() {
         this.accessStartTime = System.nanoTime();
@@ -22,57 +25,98 @@ public class PerformanceMetrics {
 
     public void stopTimer() {
         this.accessEndTime = System.nanoTime();
-        long accessTimeDelta = this.getAccessTime();
+        long accessTimeDelta = this.getAccessTimeDelta();
         this.accessTimes.add(accessTimeDelta);
         Logger.getInstance().logVerbose(null, String.format("Access Time: %.2f ms", (double) accessTimeDelta / 1000000));
     }
 
     public void incrementMemoryByPageSize() {
-        this.usedMemory += Cache.getCacheConfig().getPageSizeInKb();
+        this.usedMemory += Cache.getCacheConfig().getPageSizeInBytes();
     }
 
     public void decrementMemoryByPageSize() {
-        this.usedMemory -= Cache.getCacheConfig().getPageSizeInKb();
+        this.usedMemory -= Cache.getCacheConfig().getPageSizeInBytes();
     }
 
     public void incrementMemoryInBytes(long bytes) {
-        this.usedMemory += (bytes / 1024);
+        this.usedMemory += bytes;
     }
 
     public void decrementMemoryInBytes(long bytes) {
-        this.usedMemory -= (bytes / 1024);
+        this.usedMemory -= bytes;
     }
 
     public void recordHit() {
-        this.hits++;
+        this.perProcessHits++;
     }
 
     public void recordMiss() {
-        this.misses++;
+        this.perProcessMisses++;
     }
 
     public void recordEviction() {
-        this.evictions++;
+        this.perProcessEvictions++;
     }
 
     public void recordMemoryUsage(String operation) {
         this.memoryUsages.put(operation, this.usedMemory);
-        Logger.getInstance().logVerbose(null, "Memory used after " + operation + ": " + usedMemory + " KB");
+        Logger.getInstance().logVerbose(null, "Memory used after " + operation + ": " + usedMemory / 1024 + " KB");
     }
 
-    public double getHitRatio() {
-        return (double) this.hits / (this.hits + this.misses);
+    public LinkedHashMap<String, Long> getMemoryUsages() {
+        return memoryUsages;
     }
 
-    public double getMissRatio() {
-        return (double) this.misses / (this.hits + this.misses);
+    public List<Long> getAccessTimes() {
+        return accessTimes;
     }
 
-    public double getEvictionRatio() {
-        return (double) this.evictions / (this.hits + this.misses);
+    public List<Long> clearAccessTimes() {
+        List<Long> prevAccessTimes = this.accessTimes;
+        this.accessTimes = new ArrayList<>();
+        return prevAccessTimes;
     }
 
-    public double getAvgAccessTime() {
+    public void clearHits() {
+        this.netHits += this.perProcessHits;
+        this.perProcessHits = 0;
+    }
+
+    public void clearMisses() {
+        this.netMisses += this.perProcessMisses;
+        this.perProcessMisses = 0;
+    }
+
+    public void clearEvictions() {
+        this.netEvictions += this.perProcessEvictions;
+        this.perProcessEvictions = 0;
+    }
+
+    public double getPerProcessHitRatio() {
+        return (double) this.perProcessHits / (this.perProcessHits + this.perProcessMisses);
+    }
+
+    public double getPerProcessMissRatio() {
+        return (double) this.perProcessMisses / (this.perProcessHits + this.perProcessMisses);
+    }
+
+    public double getPerProcessEvictionRatio() {
+        return (double) this.perProcessEvictions / (this.perProcessHits + this.perProcessMisses);
+    }
+
+    public double getNetHitRatio() {
+        return (double) this.netHits / (this.netHits + this.netMisses);
+    }
+
+    public double getNetMissRatio() {
+        return (double) this.netMisses / (this.netHits + this.netMisses);
+    }
+
+    public double getNetEvictionRatio() {
+        return (double) this.netEvictions / (this.netHits + this.netMisses);
+    }
+
+    public double getPerProcessAvgAccessTime() {
         double sum = 0;
         for (long accessTime: this.accessTimes) {
             sum += (double) accessTime / 1000000; // in ms
@@ -80,23 +124,64 @@ public class PerformanceMetrics {
         return sum / this.accessTimes.size();
     }
 
+    public double getPerProcessAvgAccessTime(List<Long> prevAccessTimes) {
+        double sum = 0;
+        for (long accessTime: prevAccessTimes) {
+            sum += (double) accessTime / 1000000; // in ms
+        }
+        return sum / prevAccessTimes.size();
+    }
+
     public double getAvgMemoryUsage() {
         double sum = 0;
         for (long memoryUsage: this.memoryUsages.values()) {
-            sum += (double) memoryUsage; // in KB
+            sum += (double) memoryUsage / 1024; // in KB
         }
+        // Return Average Per-Process-Memory-Usage if the process uses lesser memory by its termination, otherwise return the memory it used last
         return sum / this.memoryUsages.size();
     }
 
-    public void log() {
-        Logger.getInstance().log(null, String.format("Hit Ratio: %.2f", this.getHitRatio()));
-        Logger.getInstance().log(null, String.format("Miss Ratio:  %.2f", this.getMissRatio()));
-        Logger.getInstance().log(null, String.format("Eviction Ratio:  %.2f", this.getEvictionRatio()));
-        Logger.getInstance().log(null, String.format("Average access time:  %.2f ms", this.getAvgAccessTime()));
-        Logger.getInstance().log(null, String.format("Average Memory Usage:  %.2f KB", this.getAvgMemoryUsage()));
+    // Resets variables and returns previous access time list for possible logging
+    public List<Long> resetPerformanceMetrics() {
+        this.clearHits();
+        this.clearMisses();
+        this.clearEvictions();
+        return this.clearAccessTimes();
     }
 
-    private long getAccessTime() {
+    public void perProcessLog() {
+        if (Cache.getCacheConfig().isMeasurePerformance()) {
+            Logger.getInstance().log(null, String.format("Hit Ratio: %.2f", this.getPerProcessHitRatio()));
+            Logger.getInstance().log(null, String.format("Miss Ratio:  %.2f", this.getPerProcessMissRatio()));
+            Logger.getInstance().log(null, String.format("Eviction Ratio:  %.2f", this.getPerProcessEvictionRatio()));
+            Logger.getInstance().log(null, String.format("Average access time:  %.2f ms", this.getPerProcessAvgAccessTime()));
+            Logger.getInstance().logVerbose(null, String.format("Access Times per page requested by the process: " + this.getAccessTimes().stream().map(item -> (double) item / 1000000).toList()));
+        }
+    }
+
+    public void netLog() {
+        if (Cache.getCacheConfig().isMeasurePerformance()) {
+            Logger.getInstance().log(null, String.format("Net Hit Ratio: %.2f", this.getNetHitRatio()));
+            Logger.getInstance().log(null, String.format("Net Miss Ratio:  %.2f", this.getNetMissRatio()));
+            Logger.getInstance().log(null, String.format("Net Eviction Ratio:  %.2f", this.getNetEvictionRatio()));
+            Logger.getInstance().log(null, String.format("Average Memory Usage:  %.10f KB", this.getAvgMemoryUsage()));
+            Logger.getInstance().logVerbose(null, String.format("Memory Usage List: " + this.getMemoryUsages()));
+        }
+    }
+
+    public void netLog(List<Long> prevAccessTimes) {
+        if (Cache.getCacheConfig().isMeasurePerformance()) {
+            Logger.getInstance().log(null, String.format("Net Hit Ratio: %.2f", this.getNetHitRatio()));
+            Logger.getInstance().log(null, String.format("Net Miss Ratio:  %.2f", this.getNetMissRatio()));
+            Logger.getInstance().log(null, String.format("Net Eviction Ratio:  %.2f", this.getNetEvictionRatio()));
+            Logger.getInstance().log(null, String.format("Average access time:  %.2f ms", this.getPerProcessAvgAccessTime(prevAccessTimes)));
+            Logger.getInstance().log(null, String.format("Average Memory Usage:  %.10f KB", this.getAvgMemoryUsage()));
+            Logger.getInstance().logVerbose(null, String.format("Memory Usage List: " + this.getMemoryUsages()));
+            Logger.getInstance().logVerbose(null, String.format("Access Times per page requested by the process: " + prevAccessTimes.stream().map(item -> (double) item / 1000000).toList()));
+        }
+    }
+
+    private long getAccessTimeDelta() {
         return this.accessEndTime - this.accessStartTime;
     }
 }

@@ -17,7 +17,7 @@ public class TwoQPolicy extends CachingPolicy {
         this.showManagementStructures();
 
         Cache.getPerformanceMetrics().incrementMemoryInBytes(page.getByteSize());
-        Cache.getPerformanceMetrics().recordMemoryUsage("Policy Insert Page");
+        Cache.getPerformanceMetrics().recordMemoryUsage("Policy Insert Page(" + page.getPageName() + ')');
     }
 
     @Override
@@ -45,7 +45,7 @@ public class TwoQPolicy extends CachingPolicy {
         }
 
         Cache.getPerformanceMetrics().decrementMemoryInBytes(evictablePage.getByteSize());
-        Cache.getPerformanceMetrics().recordMemoryUsage("Policy Evict Page");
+        Cache.getPerformanceMetrics().recordMemoryUsage("Policy Evict Page(" + evictablePage.getPageName() + ')');
 
         Cache.getInstance().evict(evictablePage.getPageName());
     }

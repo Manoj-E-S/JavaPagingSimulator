@@ -12,7 +12,6 @@ public class AdaptiveReplacementCachePolicy extends CachingPolicy {
     private final Set<Page> frequencySet = new LinkedHashSet<>();
     private final Set<Page> recencyEvictedSet = new LinkedHashSet<>();
     private final Set<Page> frequencyEvictedSet = new LinkedHashSet<>();
-    private final int cacheSize = Cache.getCacheConfig().getFramesInCache();
     private int recencyBasedBalanceParameter = 0;
 
     @Override
@@ -30,7 +29,7 @@ public class AdaptiveReplacementCachePolicy extends CachingPolicy {
         else {
             this.recencySet.add(page);
             Cache.getPerformanceMetrics().incrementMemoryInBytes(page.getByteSize());
-            Cache.getPerformanceMetrics().recordMemoryUsage("Policy Insert Page");
+            Cache.getPerformanceMetrics().recordMemoryUsage("Policy Insert Page(" + page.getPageName() + ')');
         }
         this.showManagementStructures();
     }
@@ -95,7 +94,7 @@ public class AdaptiveReplacementCachePolicy extends CachingPolicy {
 
     private int increaseRecencyBasedBalanceParameter() {
         int possibleRecencyBasedBalanceParameter = this.recencyBasedBalanceParameter + Math.max(1, this.frequencyEvictedSet.size()/this.recencyEvictedSet.size());
-        return Math.min(this.cacheSize, possibleRecencyBasedBalanceParameter);
+        return Math.min(Cache.getCacheConfig().getFramesInCache(), possibleRecencyBasedBalanceParameter);
     }
 
 
@@ -108,7 +107,7 @@ public class AdaptiveReplacementCachePolicy extends CachingPolicy {
     }
 
     private void removeHistoryPrioritizingRecency() {
-        if (this.recencyEvictedSet.size() + this.frequencyEvictedSet.size() == 2 * this.cacheSize) {
+        if (this.recencyEvictedSet.size() + this.frequencyEvictedSet.size() == 2 * Cache.getCacheConfig().getFramesInCache()) {
             // History Size cannot exceed (2 * CacheSize)
             Page evictablePage;
             if (!this.frequencyEvictedSet.isEmpty()) {
@@ -119,12 +118,12 @@ public class AdaptiveReplacementCachePolicy extends CachingPolicy {
                 this.recencyEvictedSet.remove(evictablePage);
             }
             Cache.getPerformanceMetrics().decrementMemoryInBytes(evictablePage.getByteSize());
-            Cache.getPerformanceMetrics().recordMemoryUsage("Policy Evict Page");
+            Cache.getPerformanceMetrics().recordMemoryUsage("Policy Evict Page(" + evictablePage.getPageName() + ')');
         }
     }
 
     private void removeHistoryPrioritizingFrequency() {
-        if (this.recencyEvictedSet.size() + this.frequencyEvictedSet.size() == 2 * this.cacheSize) {
+        if (this.recencyEvictedSet.size() + this.frequencyEvictedSet.size() == 2 * Cache.getCacheConfig().getFramesInCache()) {
             // History Size cannot exceed (2 * CacheSize)
             Page evictablePage;
             if (!this.recencyEvictedSet.isEmpty()) {
@@ -135,7 +134,7 @@ public class AdaptiveReplacementCachePolicy extends CachingPolicy {
                 this.frequencyEvictedSet.remove(evictablePage);
             }
             Cache.getPerformanceMetrics().decrementMemoryInBytes(evictablePage.getByteSize());
-            Cache.getPerformanceMetrics().recordMemoryUsage("Policy Evict Page");
+            Cache.getPerformanceMetrics().recordMemoryUsage("Policy Evict Page(" + evictablePage.getPageName() + ')');
         }
     }
 

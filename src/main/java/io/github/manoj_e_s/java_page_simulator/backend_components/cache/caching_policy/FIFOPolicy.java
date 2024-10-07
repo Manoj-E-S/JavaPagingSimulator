@@ -16,7 +16,7 @@ public class FIFOPolicy extends CachingPolicy {
         this.showManagementStructures();
 
         Cache.getPerformanceMetrics().incrementMemoryInBytes(page.getByteSize());
-        Cache.getPerformanceMetrics().recordMemoryUsage("Policy Insert Page");
+        Cache.getPerformanceMetrics().recordMemoryUsage("Policy Insert Page(" + page.getPageName() + ')');
     }
 
     // FIFO does not have any Post-Page-Access-Action after a page-hit
@@ -34,7 +34,7 @@ public class FIFOPolicy extends CachingPolicy {
         }
 
         Cache.getPerformanceMetrics().decrementMemoryInBytes(evictablePage.getByteSize());
-        Cache.getPerformanceMetrics().recordMemoryUsage("Policy Evict Page");
+        Cache.getPerformanceMetrics().recordMemoryUsage("Policy Evict Page(" + evictablePage.getPageName() + ')');
 
         Cache.getInstance().evict(evictablePage.getPageName());
     }

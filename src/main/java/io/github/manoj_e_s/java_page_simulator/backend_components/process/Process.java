@@ -5,6 +5,7 @@ import io.github.manoj_e_s.java_page_simulator.backend_components.cache.Cache;
 import io.github.manoj_e_s.java_page_simulator.backend_components.performance.Logger;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Queue;
 
 public class Process {
@@ -18,6 +19,9 @@ public class Process {
 
     // process file path
     public final String processFilePath;
+
+    // Log per-process-metrics?
+    public final boolean logPerProcessMetrics;
 
     // Its Pages
     private final Queue<ProcessFileLine> pageLines;
@@ -38,9 +42,10 @@ public class Process {
 
 
     // ALL PARAMS CONSTRUCTOR
-    public Process(String processFilePath, String name) throws IOException {
+    public Process(String processFilePath, String name, boolean logPerProcessMetrics) throws IOException {
         this.processFilePath = processFilePath;
         this.name = name;
+        this.logPerProcessMetrics = logPerProcessMetrics;
 
         this.pid = Process.pidCounter;
         Process.pidCounter++;
@@ -77,8 +82,18 @@ public class Process {
             Page p = Cache.getInstance().get(pageLine.pageName());
             p.run(pageLine.timeToExecuteInSeconds());
         }
-        Cache.getPerformanceMetrics().log();
+        this.logCacheMetrics();
         Logger.getInstance().log(null, "\n----------------------- END OF PROCESS -----------------------\n");
+    }
+
+    private void logCacheMetrics() {
+        if (this.logPerProcessMetrics) {
+            Cache.getPerformanceMetrics().perProcessLog();
+            Cache.getPerformanceMetrics().resetPerformanceMetrics();
+        } else {
+            List<Long> prevProcessAccessTimes = Cache.getPerformanceMetrics().resetPerformanceMetrics();
+            Cache.getPerformanceMetrics().netLog(prevProcessAccessTimes);
+        }
     }
 
 }
