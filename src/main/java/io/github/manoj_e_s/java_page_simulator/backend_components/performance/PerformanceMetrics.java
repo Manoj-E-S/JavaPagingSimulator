@@ -1,5 +1,7 @@
 package io.github.manoj_e_s.java_page_simulator.backend_components.performance;
 
+import io.github.manoj_e_s.java_page_simulator.backend_components.cache.Cache;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,8 +10,9 @@ public class PerformanceMetrics {
     private long hits;
     private long misses;
     private long evictions;
-    private long accessStartTime;
-    private long accessEndTime;
+    private long accessStartTime; // in ns
+    private long accessEndTime; // in ns
+    private long usedMemory; // in KB
     private final List<Long> accessTimes = new ArrayList<>();
     private final HashMap<String, Long> memoryUsages = new HashMap<>();
 
@@ -22,6 +25,22 @@ public class PerformanceMetrics {
         long accessTimeDelta = this.getAccessTime();
         this.accessTimes.add(accessTimeDelta);
         Logger.getInstance().logVerbose(null, String.format("Access Time: %.2f ms", (double) accessTimeDelta / 1000000));
+    }
+
+    public void incrementMemoryByPageSize() {
+        this.usedMemory += Cache.getCacheConfig().getPageSizeInKb();
+    }
+
+    public void decrementMemoryByPageSize() {
+        this.usedMemory -= Cache.getCacheConfig().getPageSizeInKb();
+    }
+
+    public void incrementMemoryInBytes(long bytes) {
+        this.usedMemory += (bytes / 1024);
+    }
+
+    public void decrementMemoryInBytes(long bytes) {
+        this.usedMemory -= (bytes / 1024);
     }
 
     public void recordHit() {
@@ -37,9 +56,7 @@ public class PerformanceMetrics {
     }
 
     public void recordMemoryUsage(String operation) {
-        Runtime runtime = Runtime.getRuntime();
-        long usedMemory = (runtime.totalMemory() - runtime.freeMemory()) / 1024; // in KB
-        this.memoryUsages.put(operation, usedMemory);
+        this.memoryUsages.put(operation, this.usedMemory);
         Logger.getInstance().logVerbose(null, "Memory used after " + operation + ": " + usedMemory + " KB");
     }
 

@@ -15,6 +15,9 @@ public class TwoQPolicy extends CachingPolicy {
     public void policyActionsPostPageAccessOnMiss(Page page) {
         this.recencyQ.add(page);
         this.showManagementStructures();
+
+        Cache.getPerformanceMetrics().incrementMemoryInBytes(page.getByteSize());
+        Cache.getPerformanceMetrics().recordMemoryUsage("Policy Insert Page");
     }
 
     @Override
@@ -40,6 +43,10 @@ public class TwoQPolicy extends CachingPolicy {
             // Should Never Occur if the app logic is correct
             throw new IllegalStateException("Recency Queue cannot be Empty, when trying to evict a page.");
         }
+
+        Cache.getPerformanceMetrics().decrementMemoryInBytes(evictablePage.getByteSize());
+        Cache.getPerformanceMetrics().recordMemoryUsage("Policy Evict Page");
+
         Cache.getInstance().evict(evictablePage.getPageName());
     }
 

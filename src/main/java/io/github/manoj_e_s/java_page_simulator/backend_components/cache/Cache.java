@@ -94,6 +94,8 @@ public class Cache {
             throw new IllegalStateException("Page cannot be NULL while putting into the Cache");
         }
         this.frames.put(page.getPageName(), page);
+
+        Cache.performanceMetrics.incrementMemoryByPageSize();
         Cache.performanceMetrics.recordMemoryUsage("Insert Page(" + page.getPageName() + ')');
     }
 
@@ -126,6 +128,8 @@ public class Cache {
     public void evict(String pageName) {
         this.frames.remove(pageName);
         Cache.performanceMetrics.recordEviction();
+
+        Cache.performanceMetrics.decrementMemoryByPageSize();
         Cache.performanceMetrics.recordMemoryUsage("Evict Page(" + pageName + ')');
     }
 

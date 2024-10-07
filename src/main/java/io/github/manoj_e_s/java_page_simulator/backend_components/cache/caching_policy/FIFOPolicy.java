@@ -14,6 +14,9 @@ public class FIFOPolicy extends CachingPolicy {
     public void policyActionsPostPageAccessOnMiss(Page page) {
         this.fifoQ.add(page);
         this.showManagementStructures();
+
+        Cache.getPerformanceMetrics().incrementMemoryInBytes(page.getByteSize());
+        Cache.getPerformanceMetrics().recordMemoryUsage("Policy Insert Page");
     }
 
     // FIFO does not have any Post-Page-Access-Action after a page-hit
@@ -29,6 +32,9 @@ public class FIFOPolicy extends CachingPolicy {
             // Should Never Occur if the app logic is correct
             throw new IllegalStateException("FIFO Queue cannot be Empty, when trying to evict a page.");
         }
+
+        Cache.getPerformanceMetrics().decrementMemoryInBytes(evictablePage.getByteSize());
+        Cache.getPerformanceMetrics().recordMemoryUsage("Policy Evict Page");
 
         Cache.getInstance().evict(evictablePage.getPageName());
     }

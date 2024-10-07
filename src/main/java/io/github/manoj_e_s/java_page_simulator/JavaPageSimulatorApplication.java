@@ -17,9 +17,9 @@ public class JavaPageSimulatorApplication {
 		Logger.getInstance().log(null, "\n");
 
 		CacheConfig cacheConfig = new CacheConfig();
-		cacheConfig.setPageSizeInKb(1024);
+		cacheConfig.setPageSizeInKb(1);
 		cacheConfig.setMeasurePerformance(false);
-		cacheConfig.setFramesInCache(3);
+		cacheConfig.setFramesInCache(10);
 		cacheConfig.setCacheHitTimeIntervalInSeconds(0);
 		cacheConfig.setCacheMissTimeIntervalInSeconds(3);
 
@@ -33,13 +33,13 @@ public class JavaPageSimulatorApplication {
 		TwoQPolicy twoQPolicy = new TwoQPolicy();
 		AdaptiveReplacementCachePolicy arcPolicy = new AdaptiveReplacementCachePolicy();
 
-		Cache.setCachingPolicy(arcPolicy);
+		Cache.setCachingPolicy(twoQPolicy);
 
 		Logger.getInstance().logVerbose(cacheConfig, "Cache Config:\n");
 		Logger.getInstance().log(Cache.getCachingPolicy(), "Caching Policy: ");
 
 		List<Process> processes = new ArrayList<>();
-		for (int i = 1; i <= 2; i++) {
+		for (int i = 1; i <= 14; i++) {
 			Process p = new Process("/home/manoj/Manoj/Projects/java-page-simulator/src/main/resources/process_files/p" + i + ".txt", "p" + (i-1));
 			processes.add(p);
 			processes.get(i-1).startSimulation();

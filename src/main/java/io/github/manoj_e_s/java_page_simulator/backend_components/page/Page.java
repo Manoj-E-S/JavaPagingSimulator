@@ -15,6 +15,9 @@ public class Page {
     private static int pageNumberCounter = 0;
     public final int pageNumber;
 
+    // Size of Object in BYTES
+    public int byteSize;
+
 
     // Getters and Setters
     public String getPageName() {
@@ -25,6 +28,9 @@ public class Page {
         return pageNumber;
     }
 
+    public int getByteSize() {
+        return byteSize;
+    }
 
     // All Params Constructor
     private Page(String pageName) {
@@ -32,6 +38,8 @@ public class Page {
 
         this.pageNumber = Page.pageNumberCounter;
         Page.pageNumberCounter++;
+
+        this.byteSize = (2 * Integer.BYTES) + (Character.BYTES * pageName.length());
     }
 
     // Page Factory

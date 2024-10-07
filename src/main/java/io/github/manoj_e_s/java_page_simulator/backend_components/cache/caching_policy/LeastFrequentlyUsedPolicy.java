@@ -16,6 +16,9 @@ public class LeastFrequentlyUsedPolicy extends CachingPolicy {
     public void policyActionsPostPageAccessOnMiss(Page page) {
         this.lfuList.add(new AbstractMap.SimpleEntry<>(page, 1));
         this.showManagementStructures();
+
+        Cache.getPerformanceMetrics().incrementMemoryInBytes(page.getByteSize() + Integer.BYTES);
+        Cache.getPerformanceMetrics().recordMemoryUsage("Policy Insert Page");
     }
 
     @Override
@@ -40,6 +43,10 @@ public class LeastFrequentlyUsedPolicy extends CachingPolicy {
             // Page is null: Should Never Occur if the app logic is correct
             throw new IllegalStateException("No Page to Evict.");
         }
+
+        Cache.getPerformanceMetrics().decrementMemoryInBytes(evictablePage_freq.getKey().getByteSize() + Integer.BYTES);
+        Cache.getPerformanceMetrics().recordMemoryUsage("Policy Evict Page");
+
         this.lfuList.remove(evictablePage_freq);
         Cache.getInstance().evict(evictablePage_freq.getKey().getPageName());
     }

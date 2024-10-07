@@ -14,6 +14,9 @@ public class MRUPolicy extends CachingPolicy {
     public void policyActionsPostPageAccessOnMiss(Page page) {
         this.mruList.add(page);
         this.showManagementStructures();
+
+        Cache.getPerformanceMetrics().incrementMemoryInBytes(page.getByteSize());
+        Cache.getPerformanceMetrics().recordMemoryUsage("Policy Insert Page");
     }
 
     @Override
@@ -30,6 +33,10 @@ public class MRUPolicy extends CachingPolicy {
             // Should Never Occur if the app logic is correct
             throw new IllegalStateException("MRU List cannot be Empty, when trying to evict a page.");
         }
+
+        Cache.getPerformanceMetrics().decrementMemoryInBytes(evictablePage.getByteSize());
+        Cache.getPerformanceMetrics().recordMemoryUsage("Policy Evict Page");
+
         this.mruList.remove(evictablePage);
         Cache.getInstance().evict(evictablePage.getPageName());
     }

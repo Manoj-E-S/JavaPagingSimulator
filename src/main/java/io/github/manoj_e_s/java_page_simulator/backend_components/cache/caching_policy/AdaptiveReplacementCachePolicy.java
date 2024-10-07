@@ -29,6 +29,8 @@ public class AdaptiveReplacementCachePolicy extends CachingPolicy {
         }
         else {
             this.recencySet.add(page);
+            Cache.getPerformanceMetrics().incrementMemoryInBytes(page.getByteSize());
+            Cache.getPerformanceMetrics().recordMemoryUsage("Policy Insert Page");
         }
         this.showManagementStructures();
     }
@@ -108,22 +110,32 @@ public class AdaptiveReplacementCachePolicy extends CachingPolicy {
     private void removeHistoryPrioritizingRecency() {
         if (this.recencyEvictedSet.size() + this.frequencyEvictedSet.size() == 2 * this.cacheSize) {
             // History Size cannot exceed (2 * CacheSize)
+            Page evictablePage;
             if (!this.frequencyEvictedSet.isEmpty()) {
-                this.frequencyEvictedSet.remove(this.frequencyEvictedSet.iterator().next());
+                evictablePage = this.frequencyEvictedSet.iterator().next();
+                this.frequencyEvictedSet.remove(evictablePage);
             } else {
-                this.recencyEvictedSet.remove(this.recencyEvictedSet.iterator().next());
+                evictablePage = this.recencyEvictedSet.iterator().next();
+                this.recencyEvictedSet.remove(evictablePage);
             }
+            Cache.getPerformanceMetrics().decrementMemoryInBytes(evictablePage.getByteSize());
+            Cache.getPerformanceMetrics().recordMemoryUsage("Policy Evict Page");
         }
     }
 
     private void removeHistoryPrioritizingFrequency() {
         if (this.recencyEvictedSet.size() + this.frequencyEvictedSet.size() == 2 * this.cacheSize) {
             // History Size cannot exceed (2 * CacheSize)
+            Page evictablePage;
             if (!this.recencyEvictedSet.isEmpty()) {
-                this.recencyEvictedSet.remove(this.recencyEvictedSet.iterator().next());
+                evictablePage = this.recencyEvictedSet.iterator().next();
+                this.recencyEvictedSet.remove(evictablePage);
             } else {
-                this.frequencyEvictedSet.remove(this.frequencyEvictedSet.iterator().next());
+                evictablePage = this.frequencyEvictedSet.iterator().next();
+                this.frequencyEvictedSet.remove(evictablePage);
             }
+            Cache.getPerformanceMetrics().decrementMemoryInBytes(evictablePage.getByteSize());
+            Cache.getPerformanceMetrics().recordMemoryUsage("Policy Evict Page");
         }
     }
 
